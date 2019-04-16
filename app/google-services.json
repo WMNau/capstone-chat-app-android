@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "305702236807",
+    "firebase_url": "https://capstone-chat-sp2019.firebaseio.com",
+    "project_id": "capstone-chat-sp2019",
+    "storage_bucket": "capstone-chat-sp2019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305702236807:android:048899bd1b30ceb8",
+        "android_client_info": {
+          "package_name": "nau.william.capstonechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305702236807-lrdi3m997l2ek528tgbqt70bnoesd98o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmFTOzzpQYKX49Jx89qUijKFUahK5DGGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305702236807-lrdi3m997l2ek528tgbqt70bnoesd98o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

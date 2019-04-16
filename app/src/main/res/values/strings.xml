@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Capstone Chat</string>
+    <string name="hint_first_name">Enter your first name…</string>
+    <string name="hint_last_name">Enter your last name…</string>
+    <string name="hint_email">Enter your email address…</string>
+    <string name="hint_confirm_email">Confirm your email address…</string>
+    <string name="hint_password">Enter your password…</string>
+    <string name="hint_confirm_password">Confirm your password…</string>
+    <string name="register">Register</string>
+    <string name="back_to_login">Back to login?</string>
+    <string name="choose_profile_image">Choose a profile image…</string>
+    <string name="login">Login</string>
+    <string name="need_account">Need an Account?</string>
+    <string name="logout">Logout</string>
+    <string name="new_message">New Message</string>
+    <string name="messages">Messages</string>
+    <string name="select_user">Select User</string>
+    <string name="send">Send</string>
+    <string name="enter_message">Enter message…</string>
+    <string name="forgot_password">Forgot password?</string>
 </resources>
