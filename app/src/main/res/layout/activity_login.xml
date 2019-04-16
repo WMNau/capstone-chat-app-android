@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:padding="20dp"
-    tools:context=".LoginActivity">
+    tools:context=".auth.LoginActivity">
 
     <info.androidhive.fontawesome.FontTextView
         android:id="@+id/register_email_font_text_view"
