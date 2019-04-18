@@ -1,7 +1,10 @@
-package nau.william.capstonechat.auth;
+package nau.william.capstonechat.activities.auth;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,16 +14,25 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.AuthResult;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import nau.william.capstonechat.R;
+import nau.william.capstonechat.activities.ProfileActivity;
+import nau.william.capstonechat.services.AuthService;
+import nau.william.capstonechat.services.ResultListener;
+import nau.william.capstonechat.utils.Validation;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "CC:RegisterActivity";
 
     private ImageView mProfileImageView;
+    private Uri mProfileImageUri;
     private EditText mFirstName, mLastName, mEmail, mConfirmEmail, mPassword, mConfirmPassword;
     private TextView mToLoginButton;
     private Button mProfileButton, mRegisterButton;
@@ -36,6 +48,22 @@ public class RegisterActivity extends AppCompatActivity {
         setErrors(new HashMap<String, String>());
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 123 && resultCode == RESULT_OK && data != null) {
+            mProfileImageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mProfileImageUri);
+                mProfileImageView.setImageBitmap(bitmap);
+                mProfileImageView.setVisibility(View.VISIBLE);
+                mProfileButton.setVisibility(View.INVISIBLE);
+            } catch (IOException e) {
+                Log.e(TAG, "onActivityResult: ", e);
+            }
+        }
+    }
+
     private void dummyData() {
         Log.d(TAG, "dummyData: Adding dummy login data...");
         mFirstName.setText("Mike");
@@ -47,7 +75,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setup() {
-        Log.d(TAG, "setup: Setting up user interactions...");
         mProfileImageView = findViewById(R.id.register_profile_image_view);
         mProfileImageView.setVisibility(View.GONE);
         mProfileButton = findViewById(R.id.register_profile_button);
@@ -63,38 +90,68 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        Log.d(TAG, "setupListeners: Setting up click listeners...");
+        mProfileButton.setOnClickListener(handleImageLoading());
         mToLoginButton.setOnClickListener(handleToLogin());
         mRegisterButton.setOnClickListener(handleRegister());
     }
 
+    private View.OnClickListener handleImageLoading() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, 123);
+            }
+        };
+    }
+
     private View.OnClickListener handleRegister() {
-        Log.d(TAG, "handleRegister: Register button clicked...");
         setErrors(new HashMap<String, String>());
         startProgressBar(true);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startProgressBar(false);
+                Map<String, String> errors = Validation.getInstance().registration(mFirstName,
+                        mLastName, mEmail, mConfirmEmail, mPassword, mConfirmPassword);
+                if (errors.size() > 0) {
+                    setErrors(errors);
+                } else {
+                    AuthService.getInstance().register(mProfileImageUri,
+                            mFirstName.getText().toString(), mLastName.getText().toString(),
+                            mEmail.getText().toString().trim().toLowerCase(),
+                            mPassword.getText().toString().trim(),
+                            new ResultListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult data) {
+                                    startProgressBar(false);
+                                    createIntentAndStartActivity(ProfileActivity.class,
+                                            Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    setErrors(Validation.getInstance().database(e));
+                                }
+                            });
+                }
             }
         };
     }
 
     private View.OnClickListener handleToLogin() {
-        Log.d(TAG, "handleToLogin: Back to login clicked...");
         startProgressBar(true);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createIntentAndStartActivity(LoginActivity.class,
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
-                        true);
+                        -1);
             }
         };
     }
 
     private void setErrors(Map<String, String> errors) {
-        Log.d(TAG, "setErrors: Setting errors on edit text fields...");
         startProgressBar(false);
         setError(mFirstName, errors.get("firstName"));
         setError(mLastName, errors.get("lastName"));
@@ -114,7 +171,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void startProgressBar(boolean shouldStart) {
-        Log.d(TAG, "startProgressBar: Progress bar starting? - " + shouldStart);
         mProfileImageView.setEnabled(!shouldStart);
         mProfileButton.setEnabled(!shouldStart);
         mFirstName.setEnabled(!shouldStart);
@@ -125,15 +181,15 @@ public class RegisterActivity extends AppCompatActivity {
         mConfirmPassword.setEnabled(!shouldStart);
         mRegisterButton.setEnabled(!shouldStart);
         mToLoginButton.setEnabled(!shouldStart);
-        mProgressBar.setVisibility(shouldStart ? View.VISIBLE : View.GONE);
+        mProgressBar.setVisibility(shouldStart ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void createIntentAndStartActivity(Class destination, int flags, boolean shouldDeleteFromCallStack) {
+    private void createIntentAndStartActivity(Class destination, int flags) {
         Intent intent = new Intent(this, destination);
         if (flags > 0) intent.setFlags(flags);
         startProgressBar(false);
         startActivity(intent);
-        if (shouldDeleteFromCallStack) finish();
+        finish();
     }
 }
 

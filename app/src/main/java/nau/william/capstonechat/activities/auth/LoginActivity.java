@@ -1,4 +1,4 @@
-package nau.william.capstonechat.auth;
+package nau.william.capstonechat.activities.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,11 +10,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.AuthResult;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 import nau.william.capstonechat.R;
+import nau.william.capstonechat.activities.ProfileActivity;
+import nau.william.capstonechat.services.AuthService;
+import nau.william.capstonechat.services.ResultListener;
+import nau.william.capstonechat.utils.Validation;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "CC:LoginActivity";
@@ -41,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setup() {
-        Log.d(TAG, "setup: Setting up user interactions...");
         mEmail = findViewById(R.id.login_email_edit_text);
         mPassword = findViewById(R.id.login_password_edit_text);
         mForgotPassword = findViewById(R.id.login_forgot_password_text_view);
@@ -51,37 +56,56 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        Log.d(TAG, "setupListeners: Setting up click listeners...");
         mForgotPassword.setOnClickListener(handleForgotPassword());
         mToRegister.setOnClickListener(handleToRegister());
         mLoginButton.setOnClickListener(handleLogin());
     }
 
     private View.OnClickListener handleLogin() {
-        Log.d(TAG, "handleLogin: Login button clicked...");
         setErrors(new HashMap<String, String>());
         startProgressBar(true);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Map<String, String> errors = Validation.getInstance().login(mEmail, mPassword);
+                if (errors.size() > 0) {
+                    setErrors(errors);
+                } else {
+                    AuthService.getInstance().login(mEmail.getText().toString().trim().toLowerCase(),
+                            mPassword.getText().toString().trim(),
+                            new ResultListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult data) {
+                                    startProgressBar(false);
+                                    createIntentAndStartActivity(ProfileActivity.class,
+                                            Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK,
+                                            true);
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    setErrors(Validation.getInstance().database(e));
+                                }
+                            });
+                }
                 startProgressBar(false);
             }
         };
     }
 
     private View.OnClickListener handleToRegister() {
-        Log.d(TAG, "handleToRegister: Need an account clicked...");
         startProgressBar(true);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createIntentAndStartActivity(RegisterActivity.class, -1, false);
+                createIntentAndStartActivity(RegisterActivity.class, -1,
+                        false);
             }
         };
     }
 
     private View.OnClickListener handleForgotPassword() {
-        Log.d(TAG, "handleForgotPassword: Forgot password clicked...");
         startProgressBar(true);
         return new View.OnClickListener() {
             @Override
@@ -92,7 +116,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setErrors(Map<String, String> errors) {
-        Log.d(TAG, "setErrors: Setting errors on edit text fields...");
         startProgressBar(false);
         setError(mEmail, errors.get("email"));
         setError(mPassword, errors.get("password"));
@@ -108,7 +131,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startProgressBar(boolean shouldStart) {
-        Log.d(TAG, "startProgressBar: Progress bar starting? - " + shouldStart);
         mEmail.setEnabled(!shouldStart);
         mPassword.setEnabled(!shouldStart);
         mForgotPassword.setEnabled(!shouldStart);

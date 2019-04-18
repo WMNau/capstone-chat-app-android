@@ -1,12 +1,13 @@
-package nau.william.capstonechat;
+package nau.william.capstonechat.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import nau.william.capstonechat.auth.LoginActivity;
+import nau.william.capstonechat.activities.auth.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "CC:MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,8 +1,9 @@
-package nau.william.capstonechat;
-
-import androidx.appcompat.app.AppCompatActivity;
+package nau.william.capstonechat.activities;
 
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import nau.william.capstonechat.R;
 
 public class ProfileActivity extends AppCompatActivity {
 
