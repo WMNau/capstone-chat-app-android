@@ -15,9 +15,10 @@ import com.google.firebase.auth.AuthResult;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import nau.william.capstonechat.R;
-import nau.william.capstonechat.activities.ProfileActivity;
+import nau.william.capstonechat.activities.messages.LatestMessagesActivity;
 import nau.william.capstonechat.services.AuthService;
 import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.utils.Validation;
@@ -47,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setup() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(R.string.login);
         mEmail = findViewById(R.id.login_email_edit_text);
         mPassword = findViewById(R.id.login_password_edit_text);
         mForgotPassword = findViewById(R.id.login_forgot_password_text_view);
@@ -77,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(AuthResult data) {
                                     startProgressBar(false);
-                                    createIntentAndStartActivity(ProfileActivity.class,
+                                    createIntentAndStartActivity(LatestMessagesActivity.class,
                                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                                     Intent.FLAG_ACTIVITY_NEW_TASK,
                                             true);
@@ -135,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
         mPassword.setEnabled(!shouldStart);
         mForgotPassword.setEnabled(!shouldStart);
         mLoginButton.setEnabled(!shouldStart);
-        mProgressBar.setVisibility(shouldStart ? View.VISIBLE : View.GONE);
+        mProgressBar.setVisibility(shouldStart ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void createIntentAndStartActivity(Class destination, int flags, boolean shouldDeleteFromCallStack) {

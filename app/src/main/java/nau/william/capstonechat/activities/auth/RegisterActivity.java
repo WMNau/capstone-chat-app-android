@@ -21,9 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import nau.william.capstonechat.R;
-import nau.william.capstonechat.activities.ProfileActivity;
+import nau.william.capstonechat.activities.messages.LatestMessagesActivity;
 import nau.william.capstonechat.services.AuthService;
 import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.utils.Validation;
@@ -75,6 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setup() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(R.string.register);
         mProfileImageView = findViewById(R.id.register_profile_image_view);
         mProfileImageView.setVisibility(View.GONE);
         mProfileButton = findViewById(R.id.register_profile_button);
@@ -125,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(AuthResult data) {
                                     startProgressBar(false);
-                                    createIntentAndStartActivity(ProfileActivity.class,
+                                    createIntentAndStartActivity(LatestMessagesActivity.class,
                                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                                     Intent.FLAG_ACTIVITY_NEW_TASK);
                                 }

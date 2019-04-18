@@ -7,8 +7,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -16,7 +14,6 @@ import com.google.firebase.storage.UploadTask;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
-import nau.william.capstonechat.models.User;
 
 public class AuthService {
     private static final String TAG = "CC:AuthService";
@@ -41,7 +38,8 @@ public class AuthService {
                         Log.d(TAG, "onSuccess: Created account...");
                         if (profileImage == null) {
                             Log.d(TAG, "onSuccess: No profile image...");
-                            saveUser(firstName, lastName, email, null,
+                            UserService.getInstance().saveUser(firstName, lastName,
+                                    email, null,
                                     new ResultListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -61,7 +59,8 @@ public class AuthService {
                                     new ResultListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri data) {
-                                            saveUser(firstName, lastName, email, data,
+                                            UserService.getInstance().saveUser(firstName, lastName,
+                                                    email, data,
                                                     new ResultListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void data) {
@@ -123,7 +122,8 @@ public class AuthService {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         try {
-                            StorageReference taskReference = taskSnapshot.getMetadata().getReference();
+                            StorageReference taskReference = taskSnapshot.getMetadata()
+                                    .getReference();
                             taskReference.getDownloadUrl()
                                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
@@ -150,30 +150,6 @@ public class AuthService {
                 });
     }
 
-    private void saveUser(final String firstName, final String lastName,
-                          final String email, final Uri image, final ResultListener<Void> results) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(getCurrentUid());
-        if (getCurrentUid() != null) {
-            databaseReference.setValue(new User(firstName, lastName, email,
-                    image == null ? "" : image.toString()))
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            results.onSuccess(aVoid);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            results.onFailure(e);
-                        }
-                    });
-        } else {
-            Exception e = new Exception("Could not save the user");
-            results.onFailure(e);
-        }
-    }
-
     public boolean isLoggedIn() {
         mAuth = FirebaseAuth.getInstance();
         return mAuth.getCurrentUser() != null;
@@ -186,5 +162,10 @@ public class AuthService {
 
     public static AuthService getInstance() {
         return mInstance;
+    }
+
+    public void logout() {
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.signOut();
     }
 }
