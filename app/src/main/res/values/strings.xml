@@ -19,4 +19,5 @@
     <string name="enter_message">Enter message…</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="selected_user_not_found">Could not locate the selected user.</string>
+    <string name="latest_messages">Latest Messages</string>
 </resources>

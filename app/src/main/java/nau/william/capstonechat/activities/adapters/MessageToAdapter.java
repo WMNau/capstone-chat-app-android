@@ -4,18 +4,17 @@ import android.net.Uri;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.squareup.picasso.Picasso;
 import com.xwray.groupie.Item;
 import com.xwray.groupie.ViewHolder;
 
-import androidx.annotation.NonNull;
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.models.Message;
 import nau.william.capstonechat.models.User;
 
 public class MessageToAdapter extends Item {
-    private static final String TAG = "CC:MessageToAdapter";
-
     private User mUser;
     private Message mMessage;
 

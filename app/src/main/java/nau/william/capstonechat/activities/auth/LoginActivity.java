@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthResult;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import nau.william.capstonechat.R;
@@ -37,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setup();
         setupListeners();
-        setErrors(new HashMap<String, String>());
+        startProgressBar(false);
     }
 
     private void setup() {
@@ -58,8 +57,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private View.OnClickListener handleLogin() {
-        setErrors(new HashMap<String, String>());
-        startProgressBar(true);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,11 +64,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (errors.size() > 0) {
                     setErrors(errors);
                 } else {
+                    startProgressBar(true);
                     AuthService.getInstance().login(mEmail.getText().toString().trim().toLowerCase(),
                             mPassword.getText().toString().trim(),
-                            new ResultListener<AuthResult>() {
+                            new ResultListener<String, AuthResult>() {
                                 @Override
-                                public void onSuccess(AuthResult data) {
+                                public void onSuccess(String key, AuthResult data) {
                                     startProgressBar(false);
                                     createIntentAndStartActivity(LatestMessagesActivity.class,
                                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
@@ -80,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
 
                                 @Override
-                                public void onChange(AuthResult data) {
+                                public void onChange(String key, AuthResult data) {
                                 }
 
                                 @Override
@@ -89,7 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                 }
-                startProgressBar(false);
             }
         };
     }
@@ -116,10 +113,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setErrors(Map<String, String> errors) {
-        startProgressBar(false);
         setError(mEmail, errors.get("email"));
         setError(mPassword, errors.get("password"));
         if (errors.get("database") != null) displayMessage(errors.get("database"));
+        startProgressBar(false);
     }
 
     private void setError(EditText field, String message) {

@@ -44,14 +44,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void getUser() {
         UserService.getInstance().getCurrentUser(
-                new ResultListener<User>() {
+                new ResultListener<String, User>() {
                     @Override
-                    public void onSuccess(User user) {
+                    public void onSuccess(String key, User user) {
                         populateProfile(user);
                     }
 
                     @Override
-                    public void onChange(User data) {
+                    public void onChange(String key, User user) {
                     }
 
                     @Override

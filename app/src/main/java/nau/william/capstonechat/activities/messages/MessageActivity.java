@@ -42,9 +42,9 @@ public class MessageActivity extends AppCompatActivity {
 
     private void setup() {
         UserService.getInstance().getCurrentUser(
-                new ResultListener<User>() {
+                new ResultListener<String, User>() {
                     @Override
-                    public void onSuccess(User user) {
+                    public void onSuccess(String key, User user) {
                         mFromUser = user;
                         mToUser = getIntent().getParcelableExtra("toUser");
                         ActionBar actionBar = getSupportActionBar();
@@ -58,7 +58,7 @@ public class MessageActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onChange(User data) {
+                    public void onChange(String key, User user) {
                     }
 
                     @Override
@@ -74,9 +74,9 @@ public class MessageActivity extends AppCompatActivity {
 
     private void getMessages() {
         MessageService.getInstance().setMessageListener(mToUser.getUid(),
-                new ResultListener<Message>() {
+                new ResultListener<String, Message>() {
                     @Override
-                    public void onSuccess(Message message) {
+                    public void onSuccess(String key, Message message) {
                         if (message.getFromUid().equals(AuthService.getInstance().getCurrentUid()))
                             mAdapter.add(new MessageFromAdapter(mFromUser, message));
                         else mAdapter.add(new MessageToAdapter(mToUser, message));
@@ -85,7 +85,7 @@ public class MessageActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onChange(Message data) {
+                    public void onChange(String key, Message message) {
                     }
 
                     @Override
@@ -102,15 +102,15 @@ public class MessageActivity extends AppCompatActivity {
                 if (!Validation.getInstance().isEmpty(mMessageText)) {
                     String text = mMessageText.getText().toString().trim();
                     MessageService.getInstance().saveMessage(mToUser.getUid(), text,
-                            new ResultListener<Void>() {
+                            new ResultListener<String, Void>() {
                                 @Override
-                                public void onSuccess(Void data) {
+                                public void onSuccess(String key, Void aVoid) {
                                     mMessageText.getText().clear();
                                     mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
 
                                 @Override
-                                public void onChange(Void data) {
+                                public void onChange(String key, Void aVoid) {
                                 }
 
                                 @Override

@@ -14,7 +14,6 @@ import nau.william.capstonechat.R;
 import nau.william.capstonechat.models.User;
 
 public class UserAdapter extends Item {
-    private static final String TAG = "CC:UserAdapter";
     private User mUser;
 
     public UserAdapter(User user) {

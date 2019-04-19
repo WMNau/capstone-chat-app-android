@@ -28,70 +28,64 @@ public class AuthService {
     public void register(final Uri profileImage,
                          final String firstName, final String lastName,
                          final String email, final String password,
-                         final ResultListener<AuthResult> results) {
-        Log.d(TAG, "register: Registering");
+                         final ResultListener<String, AuthResult> result) {
         mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(final AuthResult authResult) {
-                        Log.d(TAG, "onSuccess: Created account...");
                         if (profileImage == null) {
-                            Log.d(TAG, "onSuccess: No profile image...");
                             UserService.getInstance().saveUser(firstName, lastName,
                                     email, null,
-                                    new ResultListener<Void>() {
+                                    new ResultListener<String, Void>() {
                                         @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "onSuccess: ");
-                                            results.onSuccess(authResult);
+                                        public void onSuccess(String key, Void aVoid) {
+                                            result.onSuccess(null, authResult);
                                         }
 
                                         @Override
-                                        public void onChange(Void data) {
+                                        public void onChange(String key, Void aVoid) {
                                         }
 
                                         @Override
                                         public void onFailure(Exception e) {
                                             Log.e(TAG, "onFailure: ", e);
-                                            results.onFailure(e);
+                                            result.onFailure(e);
                                         }
                                     });
                         } else {
-                            Log.d(TAG, "onSuccess: Has a profile image...");
                             storeImage(profileImage,
-                                    new ResultListener<Uri>() {
+                                    new ResultListener<String, Uri>() {
                                         @Override
-                                        public void onSuccess(Uri data) {
+                                        public void onSuccess(String key, Uri uri) {
                                             UserService.getInstance().saveUser(firstName, lastName,
-                                                    email, data,
-                                                    new ResultListener<Void>() {
+                                                    email, uri,
+                                                    new ResultListener<String, Void>() {
                                                         @Override
-                                                        public void onSuccess(Void data) {
-                                                            results.onSuccess(authResult);
+                                                        public void onSuccess(String k, Void aVoid) {
+                                                            result.onSuccess(null, authResult);
                                                         }
 
                                                         @Override
-                                                        public void onChange(Void data) {
+                                                        public void onChange(String key, Void aVoid) {
                                                         }
 
                                                         @Override
                                                         public void onFailure(Exception e) {
                                                             Log.e(TAG, "onFailure: ", e);
-                                                            results.onFailure(e);
+                                                            result.onFailure(e);
                                                         }
                                                     });
                                         }
 
                                         @Override
-                                        public void onChange(Uri data) {
-
+                                        public void onChange(String key, Uri uri) {
                                         }
 
                                         @Override
                                         public void onFailure(Exception e) {
                                             Log.e(TAG, "onFailure: ", e);
-                                            results.onFailure(e);
+                                            result.onFailure(e);
                                         }
                                     });
                         }
@@ -101,31 +95,30 @@ public class AuthService {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e(TAG, "onFailure: ", e);
-                        results.onFailure(e);
+                        result.onFailure(e);
                     }
                 });
     }
 
     public void login(final String email, final String password,
-                      final ResultListener<AuthResult> results) {
+                      final ResultListener<String, AuthResult> result) {
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        results.onSuccess(authResult);
+                        result.onSuccess(null, authResult);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        results.onFailure(e);
+                        result.onFailure(e);
                     }
                 });
     }
 
-    private void storeImage(Uri image, final ResultListener<Uri> results) {
-        Log.d(TAG, "storeImage: Storing image.");
+    private void storeImage(Uri image, final ResultListener<String, Uri> result) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference("images");
         final String fileName = UUID.randomUUID().toString();
@@ -140,24 +133,24 @@ public class AuthService {
                                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-                                            results.onSuccess(uri);
+                                            result.onSuccess(null, uri);
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            results.onFailure(e);
+                                            result.onFailure(e);
                                         }
                                     });
                         } catch (Exception e) {
-                            results.onFailure(e);
+                            result.onFailure(e);
                         }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        results.onFailure(e);
+                        result.onFailure(e);
                     }
                 });
     }

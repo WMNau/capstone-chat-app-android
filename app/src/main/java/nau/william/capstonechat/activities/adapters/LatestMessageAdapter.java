@@ -15,8 +15,6 @@ import nau.william.capstonechat.models.Message;
 import nau.william.capstonechat.models.User;
 
 public class LatestMessageAdapter extends Item {
-    private static final String TAG = "CC:LatestMessageAdapter";
-
     private Message mMessage;
     private User mUser;
 

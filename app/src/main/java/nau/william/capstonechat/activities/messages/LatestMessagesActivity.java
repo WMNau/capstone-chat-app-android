@@ -10,16 +10,11 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.Item;
 import com.xwray.groupie.OnItemClickListener;
@@ -33,6 +28,7 @@ import nau.william.capstonechat.activities.adapters.LatestMessageAdapter;
 import nau.william.capstonechat.models.Message;
 import nau.william.capstonechat.models.User;
 import nau.william.capstonechat.services.AuthService;
+import nau.william.capstonechat.services.MessageService;
 import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.services.UserService;
 
@@ -53,7 +49,6 @@ public class LatestMessagesActivity extends AppCompatActivity {
         setup();
         setListeners();
         setMessageListener();
-        startProgressBar(true);
     }
 
     @Override
@@ -66,7 +61,6 @@ public class LatestMessagesActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent = null;
-        boolean shouldFinish = false;
         switch (item.getItemId()) {
             case R.id.menu_latest_messages_new_message:
                 intent = new Intent(this, NewMessageActivity.class);
@@ -74,17 +68,17 @@ public class LatestMessagesActivity extends AppCompatActivity {
             case R.id.menu_latest_messages_logout:
                 AuthService.getInstance().logout();
                 intent = new Intent(this, MainActivity.class);
-                shouldFinish = true;
                 break;
         }
         if (intent != null) {
             startActivity(intent);
-            if (shouldFinish) finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void setup() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(R.string.latest_messages);
         mRecyclerView = findViewById(R.id.latest_messages_recycler_view);
         mProgressBar = findViewById(R.id.latest_messages_progress_bar);
         mAdapter = new GroupAdapter();
@@ -105,84 +99,53 @@ public class LatestMessagesActivity extends AppCompatActivity {
     }
 
     private void setMessageListener() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference("latestMessages").child(AuthService
-                        .getInstance().getCurrentUid());
-        databaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                final String key = dataSnapshot.getKey();
-                final Message message = dataSnapshot.getValue(Message.class);
-                if (message != null) {
-                    String uid;
-                    if (message.getFromUid().equals(AuthService.getInstance().getCurrentUid()))
-                        uid = message.getToUid();
-                    else uid = message.getFromUid();
-                    UserService.getInstance().getUser(uid,
-                            new ResultListener<User>() {
-                                @Override
-                                public void onSuccess(User user) {
-                                    mMessages.put(key, message);
-                                    mUsers.put(key, user);
-                                    refreshView();
-                                }
+        MessageService.getInstance().setLatestMessageListener(
+                new ResultListener<String, Message>() {
+                    @Override
+                    public void onSuccess(String key, Message message) {
+                        getUserInfo(key, message);
+                    }
 
-                                @Override
-                                public void onChange(User user) {
-                                }
+                    @Override
+                    public void onChange(String key, Message message) {
+                        getUserInfo(key, message);
+                    }
 
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Log.e(TAG, "onFailure: ", e);
-                                }
-                            });
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e(TAG, "setMessageListener().onFailure: ", e);
+                    }
                 }
-            }
+        );
+    }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                final String key = dataSnapshot.getKey();
-                final Message message = dataSnapshot.getValue(Message.class);
-                if (message != null) {
-                    String uid;
-                    if (message.getFromUid().equals(AuthService.getInstance().getCurrentUid()))
-                        uid = message.getToUid();
-                    else uid = message.getFromUid();
-                    UserService.getInstance().getUser(uid,
-                            new ResultListener<User>() {
-                                @Override
-                                public void onSuccess(User user) {
-                                    mMessages.put(key, message);
-                                    mUsers.put(key, user);
-                                    refreshView();
-                                }
+    private void getUserInfo(final String key, final Message message) {
+        if (message != null) {
+            String uid;
+            if (message.getFromUid().equals(AuthService.getInstance().getCurrentUid()))
+                uid = message.getToUid();
+            else uid = message.getFromUid();
+            UserService.getInstance().getUser(uid,
+                    new ResultListener<String, User>() {
+                        @Override
+                        public void onSuccess(String k, User user) {
+                            mMessages.put(key, message);
+                            mUsers.put(key, user);
+                            refreshView();
+                        }
 
-                                @Override
-                                public void onChange(User user) {
-                                }
+                        @Override
+                        public void onChange(String key, User user) {
+                        }
 
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Log.e(TAG, "onFailure: ", e);
-                                }
-                            });
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled: ", databaseError.toException());
-            }
-        });
-        startProgressBar(false);
+                        @Override
+                        public void onFailure(Exception e) {
+                            Log.e(TAG, "getUserInfo(key, message).onFailure: ", e);
+                        }
+                    });
+        } else {
+            refreshView();
+        }
     }
 
     private void refreshView() {

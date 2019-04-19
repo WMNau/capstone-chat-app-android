@@ -46,12 +46,13 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         setup();
         setupListeners();
-        setErrors(new HashMap<String, String>());
+        startProgressBar(false);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        startProgressBar(true);
         if (requestCode == 123 && resultCode == RESULT_OK && data != null) {
             mProfileImageUri = data.getData();
             try {
@@ -63,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.e(TAG, "onActivityResult: ", e);
             }
         }
+        startProgressBar(false);
     }
 
     private void setup() {
@@ -92,16 +94,16 @@ public class RegisterActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startProgressBar(true);
                 final Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
                 startActivityForResult(intent, 123);
+                startProgressBar(false);
             }
         };
     }
 
     private View.OnClickListener handleRegister() {
-        setErrors(new HashMap<String, String>());
-        startProgressBar(true);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,21 +112,21 @@ public class RegisterActivity extends AppCompatActivity {
                 if (errors.size() > 0) {
                     setErrors(errors);
                 } else {
+                    startProgressBar(true);
                     AuthService.getInstance().register(mProfileImageUri,
                             mFirstName.getText().toString(), mLastName.getText().toString(),
                             mEmail.getText().toString().trim().toLowerCase(),
                             mPassword.getText().toString().trim(),
-                            new ResultListener<AuthResult>() {
+                            new ResultListener<String, AuthResult>() {
                                 @Override
-                                public void onSuccess(AuthResult data) {
-                                    startProgressBar(false);
+                                public void onSuccess(String key, AuthResult data) {
                                     createIntentAndStartActivity(LatestMessagesActivity.class,
                                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                                     Intent.FLAG_ACTIVITY_NEW_TASK);
                                 }
 
                                 @Override
-                                public void onChange(AuthResult data) {
+                                public void onChange(String key, AuthResult data) {
                                 }
 
                                 @Override
@@ -149,7 +151,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setErrors(Map<String, String> errors) {
-        startProgressBar(false);
         setError(mFirstName, errors.get("firstName"));
         setError(mLastName, errors.get("lastName"));
         setError(mEmail, errors.get("email"));
@@ -157,6 +158,7 @@ public class RegisterActivity extends AppCompatActivity {
         setError(mPassword, errors.get("password"));
         setError(mConfirmPassword, errors.get("confirmPassword"));
         if (errors.get("database") != null) displayMessage(errors.get("database"));
+        startProgressBar(false);
     }
 
     private void setError(EditText field, String message) {

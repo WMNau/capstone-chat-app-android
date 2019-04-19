@@ -50,11 +50,11 @@ public class NewMessageActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         UserService.getInstance().getUsers(
-                new ResultListener<List<User>>() {
+                new ResultListener<String, List<User>>() {
                     @Override
-                    public void onSuccess(List<User> data) {
+                    public void onSuccess(String key, List<User> users) {
                         GroupAdapter adapter = new GroupAdapter();
-                        for (User user : data)
+                        for (User user : users)
                             if (!user.getUid().equals(AuthService.getInstance().getCurrentUid()))
                                 adapter.add(new UserAdapter(user));
                         mRecyclerView.setAdapter(adapter);
@@ -63,7 +63,7 @@ public class NewMessageActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onChange(List<User> data) {
+                    public void onChange(String key, List<User> users) {
                     }
 
                     @Override

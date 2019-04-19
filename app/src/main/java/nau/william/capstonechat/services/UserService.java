@@ -18,14 +18,12 @@ import java.util.List;
 import nau.william.capstonechat.models.User;
 
 public class UserService {
-    private static final String TAG = "CC:UserService";
-
     private static UserService mInstance = new UserService();
 
     private UserService() {
     }
 
-    public void getCurrentUser(final ResultListener<User> results) {
+    public void getCurrentUser(final ResultListener<String, User> result) {
         String uid = AuthService.getInstance().getCurrentUid();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference("users");
@@ -33,23 +31,23 @@ public class UserService {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        results.onSuccess(dataSnapshot.getValue(User.class));
+                        result.onSuccess(null, dataSnapshot.getValue(User.class));
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        results.onFailure(databaseError.toException());
+                        result.onFailure(databaseError.toException());
                     }
                 });
     }
 
-    public void getUser(String uid, final ResultListener<User> result) {
+    public void getUser(String uid, final ResultListener<String, User> result) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference("users").child(uid);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                result.onSuccess(dataSnapshot.getValue(User.class));
+                result.onSuccess(null, dataSnapshot.getValue(User.class));
             }
 
             @Override
@@ -59,7 +57,7 @@ public class UserService {
         });
     }
 
-    public void getUsers(final ResultListener<List<User>> results) {
+    public void getUsers(final ResultListener<String, List<User>> result) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference("users");
         databaseReference
@@ -69,19 +67,21 @@ public class UserService {
                         final List<User> users = new ArrayList<>();
                         for (DataSnapshot child : dataSnapshot.getChildren())
                             users.add(child.getValue(User.class));
-                        results.onSuccess(users);
+                        result.onSuccess(null, users);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        results.onFailure(databaseError.toException());
+                        result.onFailure(databaseError.toException());
                     }
                 });
     }
 
     public void saveUser(final String firstName, final String lastName,
-                         final String email, final Uri image, final ResultListener<Void> results) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(AuthService.getInstance().getCurrentUid());
+                         final String email, final Uri image,
+                         final ResultListener<String, Void> result) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference("users").child(AuthService.getInstance().getCurrentUid());
         String uid = AuthService.getInstance().getCurrentUid();
         if (uid != null) {
             databaseReference.setValue(new User(uid, firstName, lastName, email,
@@ -89,18 +89,18 @@ public class UserService {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            results.onSuccess(aVoid);
+                            result.onSuccess(null, aVoid);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            results.onFailure(e);
+                            result.onFailure(e);
                         }
                     });
         } else {
             Exception e = new Exception("Could not save the user");
-            results.onFailure(e);
+            result.onFailure(e);
         }
     }
 
