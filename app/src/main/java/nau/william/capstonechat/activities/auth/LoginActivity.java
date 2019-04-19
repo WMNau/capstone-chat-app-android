@@ -1,5 +1,6 @@
 package nau.william.capstonechat.activities.auth;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthResult;
@@ -23,18 +25,20 @@ import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.utils.Validation;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "CC:LoginActivity";
-
     private EditText mEmail, mPassword;
     private TextView mForgotPassword, mToRegister;
     private Button mLoginButton;
     private ProgressBar mProgressBar;
+
+    private AlertDialog mAlertDialog;
+    private AlertDialog.Builder mAlertDialogBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setup();
+        setupDialog();
         setupListeners();
         startProgressBar(false);
     }
@@ -48,6 +52,21 @@ public class LoginActivity extends AppCompatActivity {
         mToRegister = findViewById(R.id.login_to_register_text_view);
         mLoginButton = findViewById(R.id.login_button);
         mProgressBar = findViewById(R.id.login_progress_bar);
+        mAlertDialogBuilder = new AlertDialog.Builder(this);
+    }
+
+    private void setupDialog() {
+        mAlertDialogBuilder.setTitle("Password Reset");
+        TextView passwordResetMessage = new TextView(this);
+        passwordResetMessage.setText(R.string.password_reset_success_message);
+        mAlertDialogBuilder.setView(passwordResetMessage);
+        mAlertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        mAlertDialog = mAlertDialogBuilder.create();
     }
 
     private void setupListeners() {
@@ -103,11 +122,32 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private View.OnClickListener handleForgotPassword() {
-        startProgressBar(true);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startProgressBar(false);
+                if (Validation.getInstance().isEmpty(mEmail)) {
+                    setError(mEmail, "Enter a valid email address to receive your password reset email.");
+                } else {
+                    startProgressBar(true);
+                    AuthService.getInstance()
+                            .forgotPassword(mEmail.getText().toString().trim().toLowerCase(),
+                                    new ResultListener<String, Void>() {
+                                        @Override
+                                        public void onSuccess(String key, Void data) {
+                                            mAlertDialog.show();
+                                            startProgressBar(false);
+                                        }
+
+                                        @Override
+                                        public void onChange(String key, Void data) {
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            setErrors(Validation.getInstance().database(e));
+                                        }
+                                    });
+                }
             }
         };
     }

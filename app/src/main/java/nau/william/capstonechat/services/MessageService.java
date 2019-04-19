@@ -153,21 +153,17 @@ public class MessageService {
     }
 
     public void setLatestMessageListener(final ResultListener<String, Message> result) {
-        Log.d(TAG, "setLatestMessageListener: ");
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference("latestMessages")
                 .child(AuthService.getInstance().getCurrentUid());
-        Log.d(TAG, "setLatestMessageListener() returned: " + AuthService.getInstance().getCurrentUid());
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG, "setLatestMessageListener().onChildAdded() returned: " + dataSnapshot.getKey());
                 result.onChange(dataSnapshot.getKey(), dataSnapshot.getValue(Message.class));
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG, "setLatestMessageListener().onChildChanged() returned: " + dataSnapshot.getKey());
                 result.onChange(dataSnapshot.getKey(), dataSnapshot.getValue(Message.class));
             }
 

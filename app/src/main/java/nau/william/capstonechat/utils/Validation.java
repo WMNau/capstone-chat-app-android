@@ -69,7 +69,6 @@ public class Validation {
     }
 
     public static Validation getInstance() {
-        Log.d(TAG, "getInstance: new Validation()");
         return mInstance;
     }
 }

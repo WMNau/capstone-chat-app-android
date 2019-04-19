@@ -155,6 +155,23 @@ public class AuthService {
                 });
     }
 
+    public void forgotPassword(String email, final ResultListener<String, Void> result) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        auth.sendPasswordResetEmail(email)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        result.onSuccess(null, aVoid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        result.onFailure(e);
+                    }
+                });
+    }
+
     public boolean isLoggedIn() {
         mAuth = FirebaseAuth.getInstance();
         return mAuth.getCurrentUser() != null;
