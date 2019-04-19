@@ -14,15 +14,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.AuthResult;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.activities.messages.LatestMessagesActivity;
 import nau.william.capstonechat.services.AuthService;
@@ -44,7 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         setup();
-        dummyData();
         setupListeners();
         setErrors(new HashMap<String, String>());
     }
@@ -63,16 +63,6 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.e(TAG, "onActivityResult: ", e);
             }
         }
-    }
-
-    private void dummyData() {
-        Log.d(TAG, "dummyData: Adding dummy login data...");
-        mFirstName.setText("Mike");
-        mLastName.setText("Nau");
-        mEmail.setText("mikenau75@gmail.com");
-        mPassword.setText("123456");
-        mConfirmEmail.setText(mEmail.getText());
-        mConfirmPassword.setText(mPassword.getText());
     }
 
     private void setup() {
@@ -131,6 +121,10 @@ public class RegisterActivity extends AppCompatActivity {
                                     createIntentAndStartActivity(LatestMessagesActivity.class,
                                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                                     Intent.FLAG_ACTIVITY_NEW_TASK);
+                                }
+
+                                @Override
+                                public void onChange(AuthResult data) {
                                 }
 
                                 @Override

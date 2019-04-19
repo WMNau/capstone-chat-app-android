@@ -3,6 +3,8 @@ package nau.william.capstonechat.services;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -12,8 +14,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.UUID;
-
-import androidx.annotation.NonNull;
 
 public class AuthService {
     private static final String TAG = "CC:AuthService";
@@ -48,6 +48,10 @@ public class AuthService {
                                         }
 
                                         @Override
+                                        public void onChange(Void data) {
+                                        }
+
+                                        @Override
                                         public void onFailure(Exception e) {
                                             Log.e(TAG, "onFailure: ", e);
                                             results.onFailure(e);
@@ -64,8 +68,11 @@ public class AuthService {
                                                     new ResultListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void data) {
-                                                            Log.d(TAG, "onSuccess: ");
                                                             results.onSuccess(authResult);
+                                                        }
+
+                                                        @Override
+                                                        public void onChange(Void data) {
                                                         }
 
                                                         @Override
@@ -74,6 +81,11 @@ public class AuthService {
                                                             results.onFailure(e);
                                                         }
                                                     });
+                                        }
+
+                                        @Override
+                                        public void onChange(Uri data) {
+
                                         }
 
                                         @Override

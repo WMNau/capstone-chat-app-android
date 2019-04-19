@@ -4,15 +4,17 @@ import android.net.Uri;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.squareup.picasso.Picasso;
 import com.xwray.groupie.Item;
 import com.xwray.groupie.ViewHolder;
 
-import androidx.annotation.NonNull;
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.models.User;
 
 public class UserAdapter extends Item {
+    private static final String TAG = "CC:UserAdapter";
     private User mUser;
 
     public UserAdapter(User user) {
@@ -35,5 +37,9 @@ public class UserAdapter extends Item {
     @Override
     public int getLayout() {
         return R.layout.user_list;
+    }
+
+    public User getUser() {
+        return mUser;
     }
 }

@@ -8,10 +8,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.squareup.picasso.Picasso;
+
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.models.User;
 import nau.william.capstonechat.services.ResultListener;
@@ -42,19 +43,24 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getUser() {
-        UserService.getInstance().getCurrentUser(new ResultListener<User>() {
-            @Override
-            public void onSuccess(User user) {
-                populateProfile(user);
-            }
+        UserService.getInstance().getCurrentUser(
+                new ResultListener<User>() {
+                    @Override
+                    public void onSuccess(User user) {
+                        populateProfile(user);
+                    }
 
-            @Override
-            public void onFailure(Exception e) {
-                Log.e(TAG, "onFailure: ", e);
-                mBio.setTextColor(Color.RED);
-                mBio.setText(R.string.selected_user_not_found);
-            }
-        });
+                    @Override
+                    public void onChange(User data) {
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e(TAG, "onFailure: ", e);
+                        mBio.setTextColor(Color.RED);
+                        mBio.setText(R.string.selected_user_not_found);
+                    }
+                });
     }
 
     private void populateProfile(User user) {

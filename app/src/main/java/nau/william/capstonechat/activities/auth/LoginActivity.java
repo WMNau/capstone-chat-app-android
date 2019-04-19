@@ -2,7 +2,6 @@ package nau.william.capstonechat.activities.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,13 +9,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.AuthResult;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.activities.messages.LatestMessagesActivity;
 import nau.william.capstonechat.services.AuthService;
@@ -36,15 +36,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setup();
-        dummyData();
         setupListeners();
         setErrors(new HashMap<String, String>());
-    }
-
-    private void dummyData() {
-        Log.d(TAG, "dummyData: Adding dummy login data...");
-        mEmail.setText("mikenau75@gmail.com");
-        mPassword.setText("123456");
     }
 
     private void setup() {
@@ -84,6 +77,10 @@ public class LoginActivity extends AppCompatActivity {
                                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                                     Intent.FLAG_ACTIVITY_NEW_TASK,
                                             true);
+                                }
+
+                                @Override
+                                public void onChange(AuthResult data) {
                                 }
 
                                 @Override

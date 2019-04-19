@@ -2,6 +2,8 @@ package nau.william.capstonechat.services;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -13,7 +15,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import nau.william.capstonechat.models.User;
 
 public class UserService {
@@ -40,6 +41,22 @@ public class UserService {
                         results.onFailure(databaseError.toException());
                     }
                 });
+    }
+
+    public void getUser(String uid, final ResultListener<User> result) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference("users").child(uid);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                result.onSuccess(dataSnapshot.getValue(User.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                result.onFailure(databaseError.toException());
+            }
+        });
     }
 
     public void getUsers(final ResultListener<List<User>> results) {

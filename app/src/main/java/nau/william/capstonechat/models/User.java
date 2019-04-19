@@ -1,5 +1,8 @@
 package nau.william.capstonechat.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -7,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class User {
+public class User implements Parcelable {
     private String uid, firstName, lastName, email, profileImage, bio;
 
     public User() {
@@ -27,6 +30,27 @@ public class User {
         this.profileImage = profileImage;
         this.bio = bio;
     }
+
+    protected User(Parcel in) {
+        uid = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        email = in.readString();
+        profileImage = in.readString();
+        bio = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getUid() {
         return uid;
@@ -86,5 +110,20 @@ public class User {
         result.put("profileImage", profileImage);
         result.put("bio", bio);
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(uid);
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(email);
+        parcel.writeString(profileImage);
+        parcel.writeString(bio);
     }
 }
