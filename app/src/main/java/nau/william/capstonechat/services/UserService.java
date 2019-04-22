@@ -13,7 +13,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nau.william.capstonechat.models.User;
 
@@ -77,9 +79,51 @@ public class UserService {
                 });
     }
 
-    public void saveUser(final String firstName, final String lastName,
-                         final String email, final Uri image,
-                         final ResultListener<String, Void> result) {
+    public void update(final User user, final String firstName, final String lastName,
+                       final String bio, final Uri uri, final ResultListener<String, Void> result) {
+        Map<String, Object> newUser = new HashMap<>();
+        if (!firstName.equals("") && !user.getFirstName().equals(firstName))
+            newUser.put("firstName", firstName);
+        if (!lastName.equals("") && !user.getLastName().equals(lastName))
+            newUser.put("lastName", lastName);
+        if (newUser.get("firstName") != null || newUser.get("lastName") != null) {
+            if (newUser.get("firstName") != null && newUser.get("lastName") != null)
+                newUser.put("fullName", firstName + " " + lastName);
+            else if (newUser.get("firstName") != null)
+                newUser.put("fullName", firstName + " " + user.getLastName());
+            else newUser.put("fullName", user.getFirstName() + " " + lastName);
+        }
+        if (bio != null)
+            if (!user.getBio().equals(bio))
+                newUser.put("bio", bio);
+        if (uri != null && !user.getProfileImage().equals(uri.toString()))
+            newUser.put("profileImage", uri);
+        if (newUser.size() > 0) {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference("users").child(user.getUid());
+            newUser.put("timestamp", user.getTimestamp());
+            newUser.put("updatedAt", System.currentTimeMillis());
+            databaseReference.updateChildren(newUser)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            result.onSuccess(null, aVoid);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            result.onFailure(e);
+                        }
+                    });
+        } else {
+            result.onSuccess(null, null);
+        }
+    }
+
+    void saveUser(final String firstName, final String lastName,
+                  final String email, final Uri image,
+                  final ResultListener<String, Void> result) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference("users").child(AuthService.getInstance().getCurrentUid());
         String uid = AuthService.getInstance().getCurrentUid();
@@ -102,6 +146,28 @@ public class UserService {
             Exception e = new Exception("Could not save the user");
             result.onFailure(e);
         }
+    }
+
+    void updateEmail(final String uid, final String email,
+                     final ResultListener<String, Void> result) {
+        Map<String, Object> updatedEmail = new HashMap<>();
+        updatedEmail.put("email", email);
+        updatedEmail.put("updatedAt", System.currentTimeMillis());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                .getReference("users").child(uid);
+        databaseReference.updateChildren(updatedEmail)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        result.onSuccess(null, aVoid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        result.onFailure(e);
+                    }
+                });
     }
 
     public static UserService getInstance() {

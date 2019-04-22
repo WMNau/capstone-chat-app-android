@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:padding="20dp"
+    tools:context=".activities.profiles.EditEmailActivity">
+
+    <info.androidhive.fontawesome.FontTextView
+        android:id="@+id/edit_email_old_email_font_text_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded_font_text"
+        android:gravity="center_vertical"
+        android:text="@string/fa_envelope"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_email_old_email_edit_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edit_email_old_email_edit_text"
+        app:solid_icon="true" />
+
+    <EditText
+        android:id="@+id/edit_email_old_email_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edit_text"
+        android:ems="10"
+        android:hint="@string/old_email_address"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress"
+        android:paddingStart="12sp"
+        android:paddingEnd="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_email_old_email_font_text_view"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="o" />
+
+    <info.androidhive.fontawesome.FontTextView
+        android:id="@+id/edit_email_new_email_font_text_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded_font_text"
+        android:gravity="center_vertical"
+        android:text="@string/fa_envelope"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_email_new_email_edit_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edit_email_new_email_edit_text"
+        app:solid_icon="true" />
+
+    <EditText
+        android:id="@+id/edit_email_new_email_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_edit_text"
+        android:ems="10"
+        android:hint="@string/old_email_address"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress"
+        android:paddingStart="12sp"
+        android:paddingEnd="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/edit_email_new_email_font_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/edit_email_old_email_edit_text"
+        tools:targetApi="o" />
+
+    <info.androidhive.fontawesome.FontTextView
+        android:id="@+id/edit_email_confirm_email_font_text_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded_font_text"
+        android:gravity="center_vertical"
+        android:text="@string/fa_envelope"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_email_confirm_email_edit_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edit_email_confirm_email_edit_text"
+        app:layout_constraintVertical_bias="0.0"
+        app:solid_icon="true" />
+
+    <EditText
+        android:id="@+id/edit_email_confirm_email_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edit_text"
+        android:ems="10"
+        android:hint="@string/hint_confirm_email"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress"
+        android:paddingStart="12sp"
+        android:paddingEnd="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/edit_email_confirm_email_font_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/edit_email_new_email_edit_text"
+        tools:targetApi="o" />
+
+    <info.androidhive.fontawesome.FontTextView
+        android:id="@+id/edit_email_password_font_text_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rounded_font_text"
+        android:gravity="center_vertical"
+        android:text="@string/fa_lock_solid"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_email_password_edit_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edit_email_password_edit_text"
+        app:solid_icon="true" />
+
+    <EditText
+        android:id="@+id/edit_email_password_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_edit_text"
+        android:ems="10"
+        android:hint="@string/hint_password"
+        android:importantForAutofill="no"
+        android:inputType="textPassword"
+        android:paddingStart="12sp"
+        android:paddingEnd="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/edit_email_confirm_email_font_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/edit_email_confirm_email_edit_text"
+        tools:targetApi="o" />
+
+    <Button
+        android:id="@+id/edit_email_submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_submit_button"
+        android:text="@string/submit"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_email_password_edit_text" />
+
+    <ProgressBar
+        android:id="@+id/edit_email_progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_button"
+        android:foregroundGravity="center"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

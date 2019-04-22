@@ -125,6 +125,7 @@ public class RoomsActivity extends AppCompatActivity {
                     }
                 }
         );
+        startProgressBar(false);
     }
 
     private void refreshView() {

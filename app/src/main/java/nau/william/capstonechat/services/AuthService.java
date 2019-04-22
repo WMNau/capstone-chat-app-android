@@ -7,8 +7,11 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -20,8 +23,6 @@ public class AuthService {
 
     private static AuthService mInstance = new AuthService();
 
-    private FirebaseAuth mAuth;
-
     private AuthService() {
     }
 
@@ -29,8 +30,7 @@ public class AuthService {
                          final String firstName, final String lastName,
                          final String email, final String password,
                          final ResultListener<String, AuthResult> result) {
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.createUserWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(final AuthResult authResult) {
@@ -102,8 +102,7 @@ public class AuthService {
 
     public void login(final String email, final String password,
                       final ResultListener<String, AuthResult> result) {
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.signInWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
@@ -156,8 +155,7 @@ public class AuthService {
     }
 
     public void forgotPassword(String email, final ResultListener<String, Void> result) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        auth.sendPasswordResetEmail(email)
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -172,14 +170,95 @@ public class AuthService {
                 });
     }
 
+    public void updateEmail(final String uid, final String email, final String password,
+                            final ResultListener<String, Void> result) {
+        if (FirebaseAuth.getInstance().getUid().equals(uid)) {
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            try {
+                final String oldEmail = user.getEmail();
+                if (oldEmail.equals(email)) {
+                    result.onSuccess(null, null);
+                } else {
+                    reauthenticate(oldEmail, password,
+                            new ResultListener<String, Void>() {
+                                @Override
+                                public void onSuccess(String key, Void data) {
+                                    user.updateEmail(email)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    reauthenticate(email, password,
+                                                            new ResultListener<String, Void>() {
+                                                                @Override
+                                                                public void onSuccess(String key, Void data) {
+                                                                    UserService.getInstance().updateEmail(getCurrentUid(), email, result);
+                                                                }
+
+                                                                @Override
+                                                                public void onChange(String key, Void data) {
+
+                                                                }
+
+                                                                @Override
+                                                                public void onFailure(Exception e) {
+                                                                    result.onFailure(e);
+                                                                }
+                                                            });
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    result.onFailure(e);
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void onChange(String key, Void data) {
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    result.onFailure(e);
+                                }
+                            });
+                }
+            } catch (Exception ex) {
+                result.onFailure(ex);
+            }
+        }
+    }
+
+    private void reauthenticate(final String email, final String password,
+                                final ResultListener<String, Void> result) {
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(email, password);
+        try {
+            FirebaseAuth.getInstance().getCurrentUser().reauthenticate(credential)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            result.onSuccess(null, aVoid);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            result.onFailure(e);
+                        }
+                    });
+        } catch (NullPointerException e) {
+            result.onFailure(new Exception("Could not find the logged in user."));
+        }
+    }
+
     public boolean isLoggedIn() {
-        mAuth = FirebaseAuth.getInstance();
-        return mAuth.getCurrentUser() != null;
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     public String getCurrentUid() {
-        mAuth = FirebaseAuth.getInstance();
-        return mAuth.getUid();
+        return FirebaseAuth.getInstance().getUid();
     }
 
     public static AuthService getInstance() {
@@ -187,7 +266,6 @@ public class AuthService {
     }
 
     public void logout() {
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
     }
 }

@@ -1,5 +1,7 @@
 package nau.william.capstonechat.services;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -32,8 +34,8 @@ public class RoomService {
                             new Exception("A room named [ " + name + " ] already exists." +
                                     " Please choose a new room name."));
                 } else {
-                    Room room = new Room(name, FirebaseAuth.getInstance().getUid());
-                    databaseReference.child(name.toLowerCase()).setValue(room)
+                    databaseReference.child(name.toLowerCase())
+                            .setValue(new Room(name, FirebaseAuth.getInstance().getUid()))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -72,10 +74,12 @@ public class RoomService {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "setRoomNameListener:onChildRemoved ");
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG, "setRoomNameListener:onChildMoved ");
             }
 
             @Override

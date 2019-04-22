@@ -75,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
         mFirstName = findViewById(R.id.register_first_name_edit_text);
         mLastName = findViewById(R.id.register_last_name_edit_text);
         mEmail = findViewById(R.id.register_email_edit_text);
-        mConfirmEmail = findViewById(R.id.register_confirm_email_edit_text);
+        mConfirmEmail = findViewById(R.id.edit_email_confirm_email_edit_text);
         mPassword = findViewById(R.id.register_password_edit_text);
         mConfirmPassword = findViewById(R.id.register_confirm_password_edit_text);
         mToLoginButton = findViewById(R.id.register_to_login_text_view);

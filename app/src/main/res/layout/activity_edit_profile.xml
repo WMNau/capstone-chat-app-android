@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".activities.profiles.EditProfileActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/edit_profile_profile_image_view"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/ic_launcher_round"
+            app:civ_border_color="@color/colorPrimary"
+            app:civ_border_width="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <info.androidhive.fontawesome.FontTextView
+            android:id="@+id/edit_profile_first_name_font_text_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_font_text"
+            android:gravity="center_vertical"
+            android:text="@string/fa_user"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_profile_first_name_edit_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edit_profile_first_name_edit_text"
+            app:layout_constraintVertical_bias="0.0"
+            app:solid_icon="true" />
+
+        <EditText
+            android:id="@+id/edit_profile_first_name_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_edit_text"
+            android:ems="10"
+            android:hint="@string/hint_first_name"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:paddingStart="12sp"
+            android:paddingEnd="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/edit_profile_last_name_edit_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/edit_profile_first_name_font_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_profile_image_view"
+            tools:targetApi="o" />
+
+        <info.androidhive.fontawesome.FontTextView
+            android:id="@+id/edit_profile_last_name_font_text_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_font_text"
+            android:gravity="center_vertical"
+            android:text="@string/fa_user"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_profile_last_name_edit_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edit_profile_last_name_edit_text"
+            app:layout_constraintVertical_bias="1.0"
+            app:solid_icon="true" />
+
+        <EditText
+            android:id="@+id/edit_profile_last_name_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/rounded_edit_text"
+            android:ems="10"
+            android:hint="@string/hint_last_name"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:paddingStart="12sp"
+            android:paddingEnd="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/edit_profile_bio_edit_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/edit_profile_last_name_font_text_view"
+            tools:targetApi="o" />
+
+        <EditText
+            android:id="@+id/edit_profile_bio_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/rounded_edit_text_full"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/bio_enter_a_description"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:minHeight="50dp"
+            android:padding="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_last_name_edit_text"
+            tools:targetApi="o" />
+
+        <Button
+            android:id="@+id/edit_profile_change_email_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="1dp"
+            android:background="@drawable/rounded_button_email_change"
+            android:padding="8dp"
+            android:text="@string/change_email_address"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/edit_profile_change_password_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_bio_edit_text"
+            app:layout_constraintWidth_percent="0.5" />
+
+        <Button
+            android:id="@+id/edit_profile_change_password_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button_password_change"
+            android:padding="8dp"
+            android:text="@string/change_password"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_profile_change_email_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edit_profile_change_email_button"
+            app:layout_constraintWidth_percent="0.5" />
+
+        <Button
+            android:id="@+id/edit_profile_submit_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/rounded_submit_button"
+            android:text="@string/submit"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_change_email_button" />
+
+        <ProgressBar
+            android:id="@+id/edit_profile_progress_bar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_button"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

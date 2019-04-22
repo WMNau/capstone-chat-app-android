@@ -12,23 +12,37 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class User implements Parcelable {
     private String uid, firstName, lastName, email, profileImage, bio;
+    private Long timestamp, updatedAt;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
     public User(String uid, String firstName, String lastName, String email, String profileImage) {
-        this(uid, firstName, lastName, email, profileImage, null);
+        this(uid, firstName, lastName, email, profileImage, "");
     }
 
     public User(String uid, String firstName, String lastName, String email,
                 String profileImage, String bio) {
+        this(uid, firstName, lastName, email, profileImage, bio, System.currentTimeMillis());
+    }
+
+    public User(String uid, String firstName, String lastName, String email,
+                String profileImage, String bio, Long timestamp) {
+        this(uid, firstName, lastName, email, profileImage, bio, timestamp,
+                System.currentTimeMillis());
+    }
+
+    public User(String uid, String firstName, String lastName, String email,
+                String profileImage, String bio, Long timestamp, Long updatedAt) {
         this.uid = uid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.profileImage = profileImage;
         this.bio = bio;
+        this.timestamp = timestamp;
+        this.updatedAt = updatedAt;
     }
 
     protected User(Parcel in) {
@@ -38,6 +52,8 @@ public class User implements Parcelable {
         email = in.readString();
         profileImage = in.readString();
         bio = in.readString();
+        timestamp = in.readLong();
+        updatedAt = in.readLong();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -80,6 +96,14 @@ public class User implements Parcelable {
         return bio;
     }
 
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public Long getUpdatedAt() {
+        return updatedAt;
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -109,6 +133,8 @@ public class User implements Parcelable {
         result.put("email", email);
         result.put("profileImage", profileImage);
         result.put("bio", bio);
+        result.put("timestamp", timestamp);
+        result.put("updatedAt", updatedAt);
         return result;
     }
 
@@ -125,5 +151,7 @@ public class User implements Parcelable {
         parcel.writeString(email);
         parcel.writeString(profileImage);
         parcel.writeString(bio);
+        parcel.writeLong(timestamp);
+        parcel.writeLong(updatedAt);
     }
 }

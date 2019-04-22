@@ -23,7 +23,13 @@
     <string name="password_reset_success_message">Your password reset email has been sent to the email address provided</string>
     <string name="add_room">Add Room</string>
     <string name="room_name_message">Add a unique room name.</string>
-    <string name="add_a_room_name">Add a room name...</string>
+    <string name="add_a_room_name">Add a room name…</string>
     <string name="private_messages">Private Messages</string>
     <string name="rooms">Rooms</string>
+    <string name="edit">Edit</string>
+    <string name="bio_enter_a_description">Enter a description of yourself…</string>
+    <string name="change_email_address">Edit email</string>
+    <string name="change_password">Edit password</string>
+    <string name="submit">Submit</string>
+    <string name="old_email_address">Enter your old email address...</string>
 </resources>
