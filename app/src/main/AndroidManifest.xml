@@ -14,12 +14,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.room_messages.ChatActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.room_messages.RoomsActivity" />
+        </activity>
+        <activity android:name=".activities.room_messages.AddRoomActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.room_messages.RoomsActivity" />
+        </activity>
+        <activity android:name=".activities.room_messages.RoomsActivity" />
         <activity android:name=".activities.messages.MessageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.messages.LatestMessagesActivity" />
         </activity>
-        <activity android:name=".activities.messages.NewMessageActivity">
+        <activity android:name=".activities.messages.PrivateMessageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.messages.LatestMessagesActivity" />

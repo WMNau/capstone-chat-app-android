@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
-    tools:context=".activities.messages.PrivateMessageActivity">
+    tools:context=".activities.room_messages.RoomsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/new_message_recycler_view"
+        android:id="@+id/room_messages_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/colorPrimaryDark"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/new_message_progress_bar"
+        android:id="@+id/room_messages_progress_bar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,4 +28,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

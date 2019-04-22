@@ -20,6 +20,7 @@ import java.util.Map;
 
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.activities.messages.LatestMessagesActivity;
+import nau.william.capstonechat.activities.room_messages.RoomsActivity;
 import nau.william.capstonechat.services.AuthService;
 import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.utils.Validation;
@@ -90,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(String key, AuthResult data) {
                                     startProgressBar(false);
-                                    createIntentAndStartActivity(LatestMessagesActivity.class,
+                                    createIntentAndStartActivity(RoomsActivity.class,
                                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                                     Intent.FLAG_ACTIVITY_NEW_TASK,
                                             true);

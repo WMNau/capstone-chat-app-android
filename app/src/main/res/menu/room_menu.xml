@@ -2,18 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_latest_messages_new_message"
-        android:icon="@drawable/ic_message"
-        android:title="@string/new_message"
+        android:id="@+id/menu_room_add_room"
+        android:icon="@drawable/ic_add_circle"
+        android:title="@string/add_room"
         app:showAsAction="ifRoom" />
-
     <item
-        android:id="@+id/menu_latest_messages_rooms_list"
-        android:icon="@drawable/ic_room"
-        android:title="@string/rooms"
+        android:id="@+id/menu_room_private_messages"
+        android:icon="@drawable/ic_message"
+        android:title="@string/private_messages"
         app:showAsAction="never" />
     <item
-        android:id="@+id/menu_latest_messages_logout"
+        android:id="@+id/menu_room_logout"
         android:icon="@drawable/ic_lock"
         android:title="@string/logout"
         app:showAsAction="never" />

@@ -25,8 +25,8 @@ import nau.william.capstonechat.services.AuthService;
 import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.services.UserService;
 
-public class NewMessageActivity extends AppCompatActivity {
-    private static final String TAG = "CC:NewMessageActivity";
+public class PrivateMessageActivity extends AppCompatActivity {
+    private static final String TAG = "CC:PrivateMessageActivity";
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -47,8 +47,11 @@ public class NewMessageActivity extends AppCompatActivity {
     }
 
     private void getUsers() {
-        mRecyclerView.addItemDecoration(
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_off_white,
+                getResources().newTheme()));
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
         UserService.getInstance().getUsers(
                 new ResultListener<String, List<User>>() {
                     @Override

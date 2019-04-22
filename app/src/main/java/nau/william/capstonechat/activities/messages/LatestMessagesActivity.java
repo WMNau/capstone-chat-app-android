@@ -25,6 +25,7 @@ import java.util.Map;
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.activities.MainActivity;
 import nau.william.capstonechat.activities.adapters.LatestMessageAdapter;
+import nau.william.capstonechat.activities.room_messages.RoomsActivity;
 import nau.william.capstonechat.models.Message;
 import nau.william.capstonechat.models.User;
 import nau.william.capstonechat.services.AuthService;
@@ -63,7 +64,11 @@ public class LatestMessagesActivity extends AppCompatActivity {
         Intent intent = null;
         switch (item.getItemId()) {
             case R.id.menu_latest_messages_new_message:
-                intent = new Intent(this, NewMessageActivity.class);
+                intent = new Intent(this, PrivateMessageActivity.class);
+                break;
+            case R.id.menu_latest_messages_rooms_list:
+                intent = new Intent(this, RoomsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 break;
             case R.id.menu_latest_messages_logout:
                 AuthService.getInstance().logout();

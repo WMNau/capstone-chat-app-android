@@ -6,7 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import nau.william.capstonechat.activities.auth.LoginActivity;
-import nau.william.capstonechat.activities.messages.LatestMessagesActivity;
+import nau.william.capstonechat.activities.room_messages.RoomsActivity;
 import nau.william.capstonechat.services.AuthService;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent;
         if (AuthService.getInstance().isLoggedIn())
-            intent = new Intent(this, LatestMessagesActivity.class);
+            intent = new Intent(this, RoomsActivity.class);
         else
             intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

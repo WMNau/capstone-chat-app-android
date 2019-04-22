@@ -20,7 +20,7 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/message_to_list_profile_image_view"
-        app:layout_constraintTop_toTopOf="@+id/message_to_list_profile_image_view" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/message_to_list_profile_image_view"
@@ -28,7 +28,8 @@
         android:layout_height="50dp"
         app:civ_border_color="@color/colorAccent"
         app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="@id/message_to_list_message_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/message_to_list_message_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

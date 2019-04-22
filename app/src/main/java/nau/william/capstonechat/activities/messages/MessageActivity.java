@@ -90,7 +90,7 @@ public class MessageActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Exception e) {
-                        Log.e(TAG, "onFailure: ", e);
+                        Log.e(TAG, "getMessages().onFailure: ", e);
                     }
                 });
     }
