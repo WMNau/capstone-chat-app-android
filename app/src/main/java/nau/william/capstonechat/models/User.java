@@ -3,11 +3,7 @@ package nau.william.capstonechat.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @IgnoreExtraProperties
 public class User implements Parcelable {
@@ -102,40 +98,6 @@ public class User implements Parcelable {
 
     public Long getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    @Exclude
-    public Map<String, Object> toMap() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("uid", uid);
-        result.put("firstName", firstName);
-        result.put("lastName", lastName);
-        result.put("email", email);
-        result.put("profileImage", profileImage);
-        result.put("bio", bio);
-        result.put("timestamp", timestamp);
-        result.put("updatedAt", updatedAt);
-        return result;
     }
 
     @Override

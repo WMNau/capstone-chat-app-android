@@ -25,6 +25,8 @@ import java.util.Map;
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.activities.MainActivity;
 import nau.william.capstonechat.activities.adapters.LatestMessageAdapter;
+import nau.william.capstonechat.activities.profiles.ProfileActivity;
+import nau.william.capstonechat.activities.profiles.ProfileListActivity;
 import nau.william.capstonechat.activities.room_messages.RoomsActivity;
 import nau.william.capstonechat.models.Message;
 import nau.william.capstonechat.models.User;
@@ -65,6 +67,32 @@ public class LatestMessagesActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_latest_messages_new_message:
                 intent = new Intent(this, PrivateMessageActivity.class);
+                break;
+            case R.id.menu_latest_messages_profile:
+                UserService.getInstance().getCurrentUser(
+                        new ResultListener<String, User>() {
+                            @Override
+                            public void onSuccess(String key, User user) {
+                                Intent intent = new Intent(mRecyclerView.getContext(), ProfileActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("user", user);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onChange(String key, User user) {
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Log.e(TAG, "onFailure: ", e);
+                            }
+                        }
+                );
+                break;
+            case R.id.menu_latest_messages_search_users:
+                intent = new Intent(this, ProfileListActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 break;
             case R.id.menu_latest_messages_rooms_list:
                 intent = new Intent(this, RoomsActivity.class);
@@ -161,8 +189,11 @@ public class LatestMessagesActivity extends AppCompatActivity {
             mAdapter.add(new LatestMessageAdapter(message, mUsers.get(key)));
         }
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_off_white,
+                getResources().newTheme()));
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
         startProgressBar(false);
 
     }

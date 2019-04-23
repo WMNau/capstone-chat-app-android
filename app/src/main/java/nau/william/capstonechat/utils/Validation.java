@@ -45,17 +45,22 @@ public class Validation {
 
     public Map<String, String> database(Exception e) {
         Map<String, String> errors = new HashMap<>();
-        if (e.getMessage().contains("The email address is badly formatted") ||
-                e.getMessage().contains("The email address is already in use by another account"))
-            errors.put("email", e.getMessage());
-        else if (e.getMessage().contains("There is no user record corresponding to this identifier") ||
-                e.getMessage().contains("The password is invalid or the user does not have a password"))
-            errors.put("email", "Invalid email address or password.");
-        else if (e.getMessage().contains("Password should be at least"))
-            errors.put("password", "Password should be at least 6 characters.");
-        else {
-            Log.e(TAG, "onFailure: ", e);
-            errors.put("database", e.getMessage());
+        try {
+            if (e.getMessage().contains("The email address is badly formatted") ||
+                    e.getMessage().contains("The email address is already in use by another account"))
+                errors.put("email", e.getMessage());
+            else if (e.getMessage().contains("There is no user record corresponding to this identifier") ||
+                    e.getMessage().contains("The password is invalid or the user does not have a password"))
+                errors.put("email", "Invalid email address or password.");
+            else if (e.getMessage().contains("Password should be at least"))
+                errors.put("password", "Password should be at least 6 characters.");
+            else {
+                Log.e(TAG, "onFailure: ", e);
+                errors.put("database", e.getMessage());
+            }
+        } catch (NullPointerException ex) {
+            errors.put("database", ex.getMessage());
+            Log.e(TAG, "database: ", ex);
         }
         return errors;
     }
@@ -64,7 +69,7 @@ public class Validation {
         return TextUtils.isEmpty(field.getText());
     }
 
-    public boolean isMatch(String value, String candidate) {
+    private boolean isMatch(String value, String candidate) {
         return value.equals(candidate);
     }
 

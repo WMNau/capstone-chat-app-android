@@ -1,7 +1,7 @@
 package nau.william.capstonechat.activities.profiles;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.squareup.picasso.Picasso;
 
 import nau.william.capstonechat.R;
+import nau.william.capstonechat.activities.messages.MessageActivity;
 import nau.william.capstonechat.models.User;
 import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.services.UserService;
@@ -34,17 +35,23 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        getUser();
+        setup();
     }
 
-    private void getUser() {
-        UserService.getInstance().getCurrentUser(
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setup();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UserService.getInstance().getUser(mUser.getUid(),
                 new ResultListener<String, User>() {
                     @Override
                     public void onSuccess(String key, User user) {
                         mUser = user;
-                        setup();
-                        setListeners();
                         populateProfile();
                     }
 
@@ -55,13 +62,12 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Exception e) {
                         Log.e(TAG, "onFailure: ", e);
-                        mBio.setTextColor(Color.RED);
-                        mBio.setText(R.string.selected_user_not_found);
                     }
                 });
     }
 
     private void setup() {
+        mUser = getIntent().getParcelableExtra("user");
         mProgressBar = findViewById(R.id.profile_progress_bar);
         mProfileImageView = findViewById(R.id.profile_profile_image_view);
         mFullName = findViewById(R.id.profile_full_name_text_view);
@@ -69,6 +75,28 @@ public class ProfileActivity extends AppCompatActivity {
         mBio = findViewById(R.id.profile_bio_text_view);
         mPrivateMessage = findViewById(R.id.profile_private_message_button);
         mEditProfile = findViewById(R.id.profile_edit_button);
+        UserService.getInstance().getCurrentUser(
+                new ResultListener<String, User>() {
+                    @Override
+                    public void onSuccess(String key, User user) {
+                        displayButton(user.getUid().equals(mUser.getUid()));
+                        setListeners();
+                        populateProfile();
+                    }
+
+                    @Override
+                    public void onChange(String key, User user) {
+                        displayButton(user.getUid().equals(mUser.getUid()));
+                        setListeners();
+                        populateProfile();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e(TAG, "onFailure: ", e);
+                    }
+                }
+        );
     }
 
     private void setListeners() {
@@ -80,17 +108,24 @@ public class ProfileActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startProgressBar(true);
+                Intent intent = new Intent(view.getContext(), MessageActivity.class);
+                intent.putExtra("toUser", mUser);
+                startActivity(intent);
+                startProgressBar(false);
             }
         };
     }
 
     private View.OnClickListener handleEditClicked() {
-        final Intent intent = new Intent(this, EditProfileActivity.class);
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startProgressBar(true);
+                final Intent intent = new Intent(view.getContext(), EditProfileActivity.class);
                 intent.putExtra("user", mUser);
                 startActivity(intent);
+                startProgressBar(false);
             }
         };
     }
@@ -98,11 +133,26 @@ public class ProfileActivity extends AppCompatActivity {
     private void populateProfile() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setTitle(mUser.getFullName() + "'s Profile");
-        Picasso.get().load(mUser.getProfileImage()).centerCrop()
-                .resize(40, 40).into(mProfileImageView);
+        try {
+            Uri uri = Uri.parse(mUser.getProfileImage());
+            Picasso.get().load(uri).error(R.drawable.ic_person).centerCrop()
+                    .resize(40, 40).into(mProfileImageView);
+        } catch (Exception e) {
+            Picasso.get().load(R.drawable.ic_person).centerCrop()
+                    .resize(40, 40).into(mProfileImageView);
+        }
         mFullName.setText(mUser.getFullName());
         mEmail.setText(mUser.getEmail());
         if (mUser.getBio() != null) mBio.setText(mUser.getBio());
-        mProgressBar.setVisibility(View.INVISIBLE);
+        startProgressBar(false);
+    }
+
+    private void displayButton(boolean isCurrentUser) {
+        mPrivateMessage.setVisibility(isCurrentUser ? View.INVISIBLE : View.VISIBLE);
+        mEditProfile.setVisibility(isCurrentUser ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void startProgressBar(boolean shouldStart) {
+        mProgressBar.setVisibility(shouldStart ? View.VISIBLE : View.INVISIBLE);
     }
 }

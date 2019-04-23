@@ -1,8 +1,10 @@
 package nau.william.capstonechat.activities.profiles;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -11,16 +13,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Map;
+import java.io.IOException;
 
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.models.User;
+import nau.william.capstonechat.services.AuthService;
 import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.services.UserService;
+import nau.william.capstonechat.utils.Display;
 
 public class EditProfileActivity extends AppCompatActivity {
     private static final String TAG = "CC:EditProfileActivity";
@@ -31,6 +37,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
 
+    private Uri mProfileImageUri;
     private User mUser;
 
     @Override
@@ -41,7 +48,26 @@ public class EditProfileActivity extends AppCompatActivity {
         setListeners();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        startProgressBar(true);
+        if (requestCode == 123 && resultCode == RESULT_OK && data != null) {
+            mProfileImageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
+                        mProfileImageUri);
+                mProfileImageView.setImageBitmap(bitmap);
+                startProgressBar(false);
+            } catch (IOException e) {
+                Log.e(TAG, "onActivityResult: ", e);
+            }
+        }
+    }
+
     private void setup() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle(R.string.edit_your_profile);
         mUser = getIntent().getParcelableExtra("user");
         mProfileImageView = findViewById(R.id.edit_profile_profile_image_view);
         mFirstName = findViewById(R.id.edit_profile_first_name_edit_text);
@@ -66,9 +92,23 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
+        mProfileImageView.setOnClickListener(handleImageLoading());
         mEditEmail.setOnClickListener(handleEditEmailClicked());
         mEditPassword.setOnClickListener(handleEditPasswordClicked());
         mSubmit.setOnClickListener(handleSubmit());
+    }
+
+    private View.OnClickListener handleImageLoading() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startProgressBar(true);
+                final Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, 123);
+                startProgressBar(false);
+            }
+        };
     }
 
     private View.OnClickListener handleEditEmailClicked() {
@@ -85,8 +125,26 @@ public class EditProfileActivity extends AppCompatActivity {
     private View.OnClickListener handleEditPasswordClicked() {
         return new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                // TODO:
+            public void onClick(final View view) {
+                AuthService.getInstance().newPassword(
+                        new ResultListener<String, Void>() {
+                            @Override
+                            public void onSuccess(String key, Void data) {
+                                Display.popupMessage(view.getContext(), "Password Reset",
+                                        "A password reset email has been sent" +
+                                                " to your email address.");
+                            }
+
+                            @Override
+                            public void onChange(String key, Void data) {
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Log.e(TAG, "onFailure: ", e);
+                            }
+                        }
+                );
             }
         };
     }
@@ -96,7 +154,7 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startProgressBar(true);
-                String firstName, lastName, bio;
+                final String firstName, lastName, bio;
                 if (TextUtils.isEmpty(mFirstName.getText()))
                     firstName = mUser.getFirstName();
                 else firstName = mFirstName.getText().toString().trim();
@@ -105,32 +163,64 @@ public class EditProfileActivity extends AppCompatActivity {
                 else lastName = mLastName.getText().toString().trim();
                 if (TextUtils.isEmpty(mBio.getText())) bio = "";
                 else bio = mBio.getText().toString().trim();
-                UserService.getInstance().update(mUser, firstName, lastName, bio,
-                        Uri.parse(mUser.getProfileImage()),
-                        new ResultListener<String, Void>() {
-                            @Override
-                            public void onSuccess(String key, Void data) {
-                                startProgressBar(false);
-                            }
+                if (mProfileImageUri != null)
+                    AuthService.getInstance().storeImage(mProfileImageUri,
+                            new ResultListener<String, Uri>() {
+                                @Override
+                                public void onSuccess(String key, Uri uri) {
+                                    updateUser(firstName, lastName, bio, uri);
+                                }
 
-                            @Override
-                            public void onChange(String key, Void data) {
-                            }
+                                @Override
+                                public void onChange(String key, Uri uri) {
+                                    updateUser(firstName, lastName, bio, uri);
+                                }
 
-                            @Override
-                            public void onFailure(Exception e) {
-                                Log.e(TAG, "handleSubmit().onChange: ", e);
-                            }
-                        });
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Log.e(TAG, "handleSubmit().onFailure: ", e);
+                                    updateUser(firstName, lastName, bio, null);
+                                }
+                            });
+                else updateUser(firstName, lastName, bio, null);
             }
         };
     }
 
-    private void setError(Map<String, String> error) {
-        mFirstName.setError(error.get("firstName"));
-        mLastName.setError(error.get("lastName"));
-        mBio.setError(error.get("bio"));
-        startProgressBar(false);
+    private void updateUser(String firstName, String lastName, String bio, Uri uri) {
+        UserService.getInstance().update(mUser, firstName, lastName, bio, uri,
+                new ResultListener<String, Void>() {
+                    @Override
+                    public void onSuccess(String key, Void data) {
+                        UserService.getInstance().getUser(mUser.getUid(),
+                                new ResultListener<String, User>() {
+                                    @Override
+                                    public void onSuccess(String key, User user) {
+                                        startProgressBar(false);
+                                        getIntent().putExtra("user", user);
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onChange(String key, User data) {
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        Log.e(TAG, "updateUser().onFailure: getUser()", e);
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onChange(String key, Void data) {
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e(TAG, "updateUser().onChange: ", e);
+                    }
+                });
     }
 
     private void startProgressBar(boolean shouldStart) {

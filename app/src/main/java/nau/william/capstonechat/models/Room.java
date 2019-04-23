@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Room implements Parcelable {
-    private static final String TAG = "CC:Room";
-
     private String name, creatorUid;
     private Long timestamp;
 
@@ -17,13 +15,13 @@ public class Room implements Parcelable {
         this(name, creatorUid, System.currentTimeMillis());
     }
 
-    public Room(String name, String creatorUid, Long timestamp) {
+    private Room(String name, String creatorUid, Long timestamp) {
         this.name = name;
         this.creatorUid = creatorUid;
         this.timestamp = timestamp;
     }
 
-    protected Room(Parcel in) {
+    private Room(Parcel in) {
         name = in.readString();
         creatorUid = in.readString();
         if (in.readByte() == 0) {
@@ -49,13 +47,13 @@ public class Room implements Parcelable {
         return name;
     }
 
-    public String getCreatorUid() {
-        return creatorUid;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
+//    public String getCreatorUid() {
+//        return creatorUid;
+//    }
+//
+//    public Long getTimestamp() {
+//        return timestamp;
+//    }
 
     @Override
     public int describeContents() {

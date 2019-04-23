@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -27,6 +26,7 @@ import nau.william.capstonechat.R;
 import nau.william.capstonechat.activities.room_messages.RoomsActivity;
 import nau.william.capstonechat.services.AuthService;
 import nau.william.capstonechat.services.ResultListener;
+import nau.william.capstonechat.utils.Display;
 import nau.william.capstonechat.utils.Validation;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -55,7 +55,8 @@ public class RegisterActivity extends AppCompatActivity {
         if (requestCode == 123 && resultCode == RESULT_OK && data != null) {
             mProfileImageUri = data.getData();
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mProfileImageUri);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
+                        mProfileImageUri);
                 mProfileImageView.setImageBitmap(bitmap);
                 mProfileImageView.setVisibility(View.VISIBLE);
                 mProfileButton.setVisibility(View.INVISIBLE);
@@ -156,16 +157,13 @@ public class RegisterActivity extends AppCompatActivity {
         setError(mConfirmEmail, errors.get("confirmEmail"));
         setError(mPassword, errors.get("password"));
         setError(mConfirmPassword, errors.get("confirmPassword"));
-        if (errors.get("database") != null) displayMessage(errors.get("database"));
+        if (errors.get("database") != null) Display.toastMessage(this,
+                errors.get("database"));
         startProgressBar(false);
     }
 
     private void setError(EditText field, String message) {
         field.setError(message);
-    }
-
-    private void displayMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     private void startProgressBar(boolean shouldStart) {

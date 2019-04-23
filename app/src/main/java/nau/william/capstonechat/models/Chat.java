@@ -17,18 +17,18 @@ public class Chat implements Parcelable {
         this(room, AuthService.getInstance().getCurrentUid(), text);
     }
 
-    public Chat(String room, String fromUid, String text) {
+    private Chat(String room, String fromUid, String text) {
         this(room, fromUid, text, System.currentTimeMillis());
     }
 
-    public Chat(String room, String fromUid, String text, Long timestamp) {
+    private Chat(String room, String fromUid, String text, Long timestamp) {
         this.room = room;
         this.fromUid = fromUid;
         this.text = text;
         this.timestamp = timestamp;
     }
 
-    protected Chat(Parcel in) {
+    private Chat(Parcel in) {
         room = in.readString();
         fromUid = in.readString();
         text = in.readString();
@@ -51,9 +51,9 @@ public class Chat implements Parcelable {
         }
     };
 
-    public String getRoom() {
-        return room;
-    }
+//    public String getRoom() {
+//        return room;
+//    }
 
     public String getFromUid() {
         return fromUid;
@@ -63,9 +63,9 @@ public class Chat implements Parcelable {
         return text;
     }
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
+//    public Long getTimestamp() {
+//        return timestamp;
+//    }
 
     @Override
     public int describeContents() {

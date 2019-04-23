@@ -11,8 +11,6 @@ import nau.william.capstonechat.R;
 import nau.william.capstonechat.models.Room;
 
 public class RoomNameAdapter extends Item {
-    private static final String TAG = "CC:RoomNameAdapter";
-
     private Room mRoom;
 
     public RoomNameAdapter(Room room) {
@@ -22,7 +20,8 @@ public class RoomNameAdapter extends Item {
     @Override
     public void bind(@NonNull ViewHolder viewHolder, int position) {
         TextView room = viewHolder.itemView.findViewById(R.id.room_message_list_room_text_view);
-        room.setText("#" + mRoom.getName());
+        String text = "#" + mRoom.getName();
+        room.setText(text);
     }
 
     @Override

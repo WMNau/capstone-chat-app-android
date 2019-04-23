@@ -23,6 +23,9 @@ public class RoomService {
 
     private static RoomService mInstance = new RoomService();
 
+    private RoomService() {
+    }
+
     public void addRoom(final String name, final ResultListener<String, Void> result) {
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                 .getReference("rooms");

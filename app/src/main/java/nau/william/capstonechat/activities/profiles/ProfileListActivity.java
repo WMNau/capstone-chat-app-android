@@ -1,4 +1,4 @@
-package nau.william.capstonechat.activities.room_messages;
+package nau.william.capstonechat.activities.profiles;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,45 +19,41 @@ import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.Item;
 import com.xwray.groupie.OnItemClickListener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import nau.william.capstonechat.R;
 import nau.william.capstonechat.activities.MainActivity;
-import nau.william.capstonechat.activities.adapters.RoomNameAdapter;
+import nau.william.capstonechat.activities.adapters.UserAdapter;
 import nau.william.capstonechat.activities.messages.LatestMessagesActivity;
-import nau.william.capstonechat.activities.profiles.ProfileActivity;
-import nau.william.capstonechat.activities.profiles.ProfileListActivity;
-import nau.william.capstonechat.models.Room;
+import nau.william.capstonechat.activities.room_messages.RoomsActivity;
 import nau.william.capstonechat.models.User;
 import nau.william.capstonechat.services.AuthService;
 import nau.william.capstonechat.services.ResultListener;
-import nau.william.capstonechat.services.RoomService;
 import nau.william.capstonechat.services.UserService;
 
-public class RoomsActivity extends AppCompatActivity {
-    private static final String TAG = "CC:RoomsActivity";
+public class ProfileListActivity extends AppCompatActivity {
+    private static final String TAG = "CC:ProfileListActivity";
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
 
     private GroupAdapter mAdapter;
-    private Map<String, Room> mRooms;
-    private User mUser;
+
+    private User mCurrentUser;
+    private List<User> mUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rooms);
+        setContentView(R.layout.activity_profile_list);
         setup();
-        setListeners();
-        setRoomNameListener();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.room_menu, menu);
+        inflater.inflate(R.menu.profile_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -65,23 +61,20 @@ public class RoomsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Intent intent = null;
         switch (item.getItemId()) {
-            case R.id.menu_room_add_room:
-                intent = new Intent(this, AddRoomActivity.class);
+            case R.id.menu_profile_profile:
+                intent = new Intent(this, ProfileActivity.class);
+                intent.putExtra("user", mCurrentUser);
                 break;
-            case R.id.menu_room_private_messages:
+            case R.id.menu_profile_rooms:
+                intent = new Intent(this, RoomsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                break;
+            case R.id.menu_profile_private_messages:
                 intent = new Intent(this, LatestMessagesActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 break;
-            case R.id.menu_room_profile:
-                intent = new Intent(mRecyclerView.getContext(), ProfileActivity.class);
-                intent.putExtra("user", mUser);
-                startActivity(intent);
-                break;
-            case R.id.menu_room_search_users:
-                intent = new Intent(this, ProfileListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                break;
-            case R.id.menu_room_logout:
+            case R.id.menu_profile_logout:
+                Log.d(TAG, "onOptionsItemSelected() returned: " + true);
                 AuthService.getInstance().logout();
                 intent = new Intent(this, MainActivity.class);
                 break;
@@ -89,84 +82,89 @@ public class RoomsActivity extends AppCompatActivity {
         if (intent != null) {
             startActivity(intent);
         }
-        return super.onContextItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     private void setup() {
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.setTitle("Rooms");
-        mRecyclerView = findViewById(R.id.room_messages_recycler_view);
-        mProgressBar = findViewById(R.id.room_messages_progress_bar);
+        if (actionBar != null) actionBar.setTitle(R.string.search_users);
+        mRecyclerView = findViewById(R.id.latest_messages_recycler_view);
+        mProgressBar = findViewById(R.id.latest_messages_progress_bar);
         mAdapter = new GroupAdapter();
-        mRooms = new HashMap<>();
+        mUsers = new ArrayList<>();
         UserService.getInstance().getCurrentUser(
                 new ResultListener<String, User>() {
                     @Override
                     public void onSuccess(String key, User user) {
-                        mUser = user;
+                        mCurrentUser = user;
+                        setListeners();
+                        getUsers();
                     }
 
                     @Override
                     public void onChange(String key, User user) {
-                        mUser = user;
+                        mCurrentUser = user;
+                        setListeners();
+                        getUsers();
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        Log.e(TAG, "setup().onFailure: ", e);
+                        Log.e(TAG, "onFailure: ", e);
                     }
                 }
         );
     }
 
     private void setListeners() {
-        final Intent intent = new Intent(this, ChatActivity.class);
+        final Intent intent = new Intent(this, ProfileActivity.class);
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull Item item, @NonNull View view) {
                 startProgressBar(true);
-                intent.putExtra("chatRoom", ((RoomNameAdapter) item).getRoom());
+                intent.putExtra("user", ((UserAdapter) item).getUser());
                 startActivity(intent);
             }
         });
     }
 
-    private void setRoomNameListener() {
+    private void getUsers() {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL);
         dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_off_white,
                 getResources().newTheme()));
         mRecyclerView.addItemDecoration(dividerItemDecoration);
-        RoomService.getInstance().setRoomNameListener(
-                new ResultListener<String, Room>() {
+        UserService.getInstance().getUsers(
+                new ResultListener<String, List<User>>() {
                     @Override
-                    public void onSuccess(String key, Room room) {
-                        if (room != null) mRooms.put(key, room);
+                    public void onSuccess(String key, List<User> users) {
+                        for (User user : users)
+                            if (!user.getUid().equals(mCurrentUser.getUid())) mUsers.add(user);
                         refreshView();
                     }
 
                     @Override
-                    public void onChange(String key, Room room) {
-                        if (room != null) mRooms.put(key, room);
+                    public void onChange(String key, List<User> users) {
+                        for (User user : users)
+                            if (!user.getUid().equals(mCurrentUser.getUid())) mUsers.add(user);
                         refreshView();
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        Log.e(TAG, "setRoomNameListener().onFailure: ", e);
+                        Log.e(TAG, "onFailure: ", e);
                     }
                 }
         );
-        startProgressBar(false);
     }
 
     private void refreshView() {
         mAdapter.clear();
-        for (Map.Entry<String, Room> entry : mRooms.entrySet()) {
-            mAdapter.add(new RoomNameAdapter(entry.getValue()));
-        }
+        for (User user : mUsers)
+            mAdapter.add(new UserAdapter(user));
         mRecyclerView.setAdapter(mAdapter);
         startProgressBar(false);
+
     }
 
     private void startProgressBar(boolean shouldStart) {

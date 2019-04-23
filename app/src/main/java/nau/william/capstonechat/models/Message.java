@@ -6,8 +6,6 @@ import android.os.Parcelable;
 import nau.william.capstonechat.services.AuthService;
 
 public class Message implements Parcelable {
-    private static final String TAG = "CC:Message";
-
     private String fromUid, toUid, text;
     private Long timestamp;
 
@@ -19,14 +17,14 @@ public class Message implements Parcelable {
         this(AuthService.getInstance().getCurrentUid(), toUid, text, System.currentTimeMillis());
     }
 
-    public Message(String fromUid, String toUid, String text, Long timestamp) {
+    private Message(String fromUid, String toUid, String text, Long timestamp) {
         this.fromUid = fromUid;
         this.toUid = toUid;
         this.text = text;
         this.timestamp = timestamp;
     }
 
-    protected Message(Parcel in) {
+    private Message(Parcel in) {
         fromUid = in.readString();
         toUid = in.readString();
         text = in.readString();
@@ -61,9 +59,9 @@ public class Message implements Parcelable {
         return text;
     }
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
+//    public Long getTimestamp() {
+//        return timestamp;
+//    }
 
     @Override
     public int describeContents() {

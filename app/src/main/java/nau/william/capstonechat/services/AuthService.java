@@ -49,7 +49,8 @@ public class AuthService {
 
                                         @Override
                                         public void onFailure(Exception e) {
-                                            Log.e(TAG, "onFailure: ", e);
+                                            Log.e(TAG, "register().addOnSuccessListener()" +
+                                                    ".onFailure: profileImage == null", e);
                                             result.onFailure(e);
                                         }
                                     });
@@ -72,7 +73,10 @@ public class AuthService {
 
                                                         @Override
                                                         public void onFailure(Exception e) {
-                                                            Log.e(TAG, "onFailure: ", e);
+                                                            Log.e(TAG, "register()" +
+                                                                    ".addOnSuccessListener()" +
+                                                                    ".onFailure: profileImage !=" +
+                                                                    " null", e);
                                                             result.onFailure(e);
                                                         }
                                                     });
@@ -84,7 +88,8 @@ public class AuthService {
 
                                         @Override
                                         public void onFailure(Exception e) {
-                                            Log.e(TAG, "onFailure: ", e);
+                                            Log.e(TAG, "register().addOnSuccessListener()" +
+                                                    ".onFailure: profileImage != null", e);
                                             result.onFailure(e);
                                         }
                                     });
@@ -94,7 +99,7 @@ public class AuthService {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "onFailure: ", e);
+                        Log.e(TAG, "register().addOnFailureListener().onFailure: ", e);
                         result.onFailure(e);
                     }
                 });
@@ -117,7 +122,7 @@ public class AuthService {
                 });
     }
 
-    private void storeImage(Uri image, final ResultListener<String, Uri> result) {
+    public void storeImage(Uri image, final ResultListener<String, Uri> result) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference("images");
         final String fileName = UUID.randomUUID().toString();
@@ -141,7 +146,7 @@ public class AuthService {
                                             result.onFailure(e);
                                         }
                                     });
-                        } catch (Exception e) {
+                        } catch (NullPointerException e) {
                             result.onFailure(e);
                         }
                     }
@@ -170,9 +175,19 @@ public class AuthService {
                 });
     }
 
+    public void newPassword(final ResultListener<String, Void> result) {
+        try {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            String currentUserEmail = currentUser.getEmail();
+            forgotPassword(currentUserEmail, result);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "newPassword: ", e);
+        }
+    }
+
     public void updateEmail(final String uid, final String email, final String password,
                             final ResultListener<String, Void> result) {
-        if (FirebaseAuth.getInstance().getUid().equals(uid)) {
+        if (getCurrentUid().equals(uid)) {
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             try {
                 final String oldEmail = user.getEmail();
@@ -235,7 +250,8 @@ public class AuthService {
         AuthCredential credential = EmailAuthProvider
                 .getCredential(email, password);
         try {
-            FirebaseAuth.getInstance().getCurrentUser().reauthenticate(credential)
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            currentUser.reauthenticate(credential)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {

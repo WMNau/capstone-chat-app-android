@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_profile_profile"
+        android:icon="@drawable/ic_person"
+        android:title="@string/view_your_profile"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_profile_rooms"
+        android:icon="@drawable/ic_add_circle"
+        android:title="@string/rooms"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_profile_private_messages"
+        android:icon="@drawable/ic_message"
+        android:title="@string/messages"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_profile_logout"
+        android:icon="@drawable/ic_lock"
+        android:title="@string/logout"
+        app:showAsAction="never" />
+</menu>

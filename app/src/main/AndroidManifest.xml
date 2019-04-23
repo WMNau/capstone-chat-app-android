@@ -14,15 +14,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.profiles.ProfileListActivity" />
+        <activity android:name=".activities.profiles.ProfileActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.profiles.ProfileListActivity" />
+        </activity>
         <activity android:name=".activities.profiles.EditEmailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.profiles.EditProfileActivity" />
+                android:value=".activities.profiles.ProfileListActivity" />
         </activity>
         <activity android:name=".activities.profiles.EditProfileActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.profiles.ProfileActivity" />
+                android:value=".activities.profiles.ProfileListActivity" />
         </activity>
         <activity android:name=".activities.room_messages.ChatActivity">
             <meta-data
@@ -46,7 +52,6 @@
                 android:value=".activities.messages.LatestMessagesActivity" />
         </activity>
         <activity android:name=".activities.messages.LatestMessagesActivity" />
-        <activity android:name=".activities.profiles.ProfileActivity" />
         <activity android:name=".activities.auth.RegisterActivity" />
         <activity android:name=".activities.auth.LoginActivity">
             <intent-filter>

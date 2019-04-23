@@ -20,7 +20,6 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="selected_user_not_found">Could not locate the selected user.</string>
     <string name="latest_messages">Latest Messages</string>
-    <string name="password_reset_success_message">Your password reset email has been sent to the email address provided</string>
     <string name="add_room">Add Room</string>
     <string name="room_name_message">Add a unique room name.</string>
     <string name="add_a_room_name">Add a room name…</string>
@@ -32,4 +31,7 @@
     <string name="change_password">Edit password</string>
     <string name="submit">Submit</string>
     <string name="old_email_address">Enter your old email address...</string>
+    <string name="view_your_profile">View your profile</string>
+    <string name="search_users">Search users</string>
+    <string name="edit_your_profile">Edit your profile</string>
 </resources>

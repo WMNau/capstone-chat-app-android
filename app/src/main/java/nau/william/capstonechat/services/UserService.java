@@ -81,29 +81,30 @@ public class UserService {
 
     public void update(final User user, final String firstName, final String lastName,
                        final String bio, final Uri uri, final ResultListener<String, Void> result) {
-        Map<String, Object> newUser = new HashMap<>();
+        Map<String, Object> updatedUser = new HashMap<>();
         if (!firstName.equals("") && !user.getFirstName().equals(firstName))
-            newUser.put("firstName", firstName);
+            updatedUser.put("firstName", firstName);
         if (!lastName.equals("") && !user.getLastName().equals(lastName))
-            newUser.put("lastName", lastName);
-        if (newUser.get("firstName") != null || newUser.get("lastName") != null) {
-            if (newUser.get("firstName") != null && newUser.get("lastName") != null)
-                newUser.put("fullName", firstName + " " + lastName);
-            else if (newUser.get("firstName") != null)
-                newUser.put("fullName", firstName + " " + user.getLastName());
-            else newUser.put("fullName", user.getFirstName() + " " + lastName);
+            updatedUser.put("lastName", lastName);
+        if (updatedUser.get("firstName") != null || updatedUser.get("lastName") != null) {
+            if (updatedUser.get("firstName") != null && updatedUser.get("lastName") != null)
+                updatedUser.put("fullName", firstName + " " + lastName);
+            else if (updatedUser.get("firstName") != null)
+                updatedUser.put("fullName", firstName + " " + user.getLastName());
+            else updatedUser.put("fullName", user.getFirstName() + " " + lastName);
         }
         if (bio != null)
             if (!user.getBio().equals(bio))
-                newUser.put("bio", bio);
+                updatedUser.put("bio", bio);
         if (uri != null && !user.getProfileImage().equals(uri.toString()))
-            newUser.put("profileImage", uri);
-        if (newUser.size() > 0) {
+            updatedUser.put("profileImage", uri.toString());
+        else if (uri == null) updatedUser.put("profileImage", "");
+        if (updatedUser.size() > 0) {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                     .getReference("users").child(user.getUid());
-            newUser.put("timestamp", user.getTimestamp());
-            newUser.put("updatedAt", System.currentTimeMillis());
-            databaseReference.updateChildren(newUser)
+            updatedUser.put("timestamp", user.getTimestamp());
+            updatedUser.put("updatedAt", System.currentTimeMillis());
+            databaseReference.updateChildren(updatedUser)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -128,8 +129,10 @@ public class UserService {
                 .getReference("users").child(AuthService.getInstance().getCurrentUid());
         String uid = AuthService.getInstance().getCurrentUid();
         if (uid != null) {
-            databaseReference.setValue(new User(uid, firstName, lastName, email,
-                    image == null ? "" : image.toString()))
+            Long createdAt = System.currentTimeMillis();
+            User user = new User(uid, firstName, lastName, email,
+                    image == null ? "" : image.toString(), "", createdAt, createdAt);
+            databaseReference.setValue(user)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
