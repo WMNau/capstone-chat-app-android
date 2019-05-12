@@ -12,24 +12,32 @@
         android:layout_height="50dp"
         app:civ_border_color="@color/colorAccent"
         app:civ_border_width="2dp"
-        app:layout_constraintBottom_toBottomOf="@+id/message_from_list_message_text_view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/message_from_list_message_text_view" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/message_from_date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toTopOf="@+id/message_from_list_profile_image_view"
+        app:layout_constraintStart_toStartOf="@+id/message_from_list_profile_image_view"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/message_from_list_message_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_message_bubble"
         android:maxWidth="250dp"
         android:padding="8dp"
         android:textColor="@color/colorAccent"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/message_from_list_profile_image_view"
         app:layout_constraintStart_toEndOf="@+id/message_from_list_profile_image_view"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/message_from_list_profile_image_view"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

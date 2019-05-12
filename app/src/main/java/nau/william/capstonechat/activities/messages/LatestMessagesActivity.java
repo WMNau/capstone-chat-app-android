@@ -36,169 +36,171 @@ import nau.william.capstonechat.services.ResultListener;
 import nau.william.capstonechat.services.UserService;
 
 public class LatestMessagesActivity extends AppCompatActivity {
-    private static final String TAG = "CC:LatestMessagesActivity";
+  private static final String TAG = "CC:LatestMessagesActivity";
 
-    private RecyclerView mRecyclerView;
-    private ProgressBar mProgressBar;
+  private RecyclerView mRecyclerView;
+  private ProgressBar mProgressBar;
 
-    private GroupAdapter mAdapter;
-    private Map<String, Message> mMessages;
-    private Map<String, User> mUsers;
+  private GroupAdapter mAdapter;
+  private Map<String, Message> mMessages;
+  private Map<String, User> mUsers;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_latest_messages);
-        setup();
-        setListeners();
-        setMessageListener();
-    }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_latest_messages);
+    setup();
+    setListeners();
+    setMessageListener();
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.latest_messages_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.latest_messages_menu, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Intent intent = null;
-        switch (item.getItemId()) {
-            case R.id.menu_latest_messages_new_message:
-                intent = new Intent(this, PrivateMessageActivity.class);
-                break;
-            case R.id.menu_latest_messages_profile:
-                UserService.getInstance().getCurrentUser(
-                        new ResultListener<String, User>() {
-                            @Override
-                            public void onSuccess(String key, User user) {
-                                Intent intent = new Intent(mRecyclerView.getContext(), ProfileActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtra("user", user);
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onChange(String key, User user) {
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-                                Log.e(TAG, "onFailure: ", e);
-                            }
-                        }
-                );
-                break;
-            case R.id.menu_latest_messages_search_users:
-                intent = new Intent(this, ProfileListActivity.class);
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    Intent intent = null;
+    switch (item.getItemId()) {
+      case R.id.menu_latest_messages_new_message:
+        intent = new Intent(this, PrivateMessageActivity.class);
+        break;
+      case R.id.menu_latest_messages_profile:
+        UserService.getInstance().getCurrentUser(
+            new ResultListener<String, User>() {
+              @Override
+              public void onSuccess(String key, User user) {
+                Intent intent = new Intent(mRecyclerView.getContext(), ProfileActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                break;
-            case R.id.menu_latest_messages_rooms_list:
-                intent = new Intent(this, RoomsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                break;
-            case R.id.menu_latest_messages_logout:
-                AuthService.getInstance().logout();
-                intent = new Intent(this, MainActivity.class);
-                break;
-        }
-        if (intent != null) {
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setup() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.setTitle(R.string.latest_messages);
-        mRecyclerView = findViewById(R.id.latest_messages_recycler_view);
-        mProgressBar = findViewById(R.id.latest_messages_progress_bar);
-        mAdapter = new GroupAdapter();
-        mMessages = new HashMap<>();
-        mUsers = new HashMap<>();
-    }
-
-    private void setListeners() {
-        final Intent intent = new Intent(this, MessageActivity.class);
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(@NonNull Item item, @NonNull View view) {
-                startProgressBar(true);
-                intent.putExtra("toUser", ((LatestMessageAdapter) item).getUser());
+                intent.putExtra("user", user);
                 startActivity(intent);
+              }
+
+              @Override
+              public void onChange(String key, User user) {
+              }
+
+              @Override
+              public void onFailure(Exception e) {
+                Log.e(TAG, "onFailure: ", e);
+              }
             }
-        });
-    }
-
-    private void setMessageListener() {
-        MessageService.getInstance().setLatestMessageListener(
-                new ResultListener<String, Message>() {
-                    @Override
-                    public void onSuccess(String key, Message message) {
-                        getUserInfo(key, message);
-                    }
-
-                    @Override
-                    public void onChange(String key, Message message) {
-                        getUserInfo(key, message);
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Log.e(TAG, "setMessageListener().onFailure: ", e);
-                    }
-                }
         );
+        break;
+      case R.id.menu_latest_messages_search_users:
+        intent = new Intent(this, ProfileListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        break;
+      case R.id.menu_latest_messages_rooms_list:
+        intent = new Intent(this, RoomsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        break;
+      case R.id.menu_latest_messages_logout:
+        AuthService.getInstance().logout();
+        intent = new Intent(this, MainActivity.class);
+        break;
     }
+    if (intent != null) {
+      startActivity(intent);
+    }
+    return super.onOptionsItemSelected(item);
+  }
 
-    private void getUserInfo(final String key, final Message message) {
-        if (message != null) {
-            String uid;
-            if (message.getFromUid().equals(AuthService.getInstance().getCurrentUid()))
-                uid = message.getToUid();
-            else uid = message.getFromUid();
-            UserService.getInstance().getUser(uid,
-                    new ResultListener<String, User>() {
-                        @Override
-                        public void onSuccess(String k, User user) {
-                            mMessages.put(key, message);
-                            mUsers.put(key, user);
-                            refreshView();
-                        }
+  private void setup() {
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) actionBar.setTitle(R.string.latest_messages);
+    mRecyclerView = findViewById(R.id.latest_messages_recycler_view);
+    mProgressBar = findViewById(R.id.latest_messages_progress_bar);
+    mAdapter = new GroupAdapter();
+    mMessages = new HashMap<>();
+    mUsers = new HashMap<>();
+  }
 
-                        @Override
-                        public void onChange(String key, User user) {
-                        }
+  private void setListeners() {
+    final Intent intent = new Intent(this, MessageActivity.class);
+    mAdapter.setOnItemClickListener(new OnItemClickListener() {
+      @Override
+      public void onItemClick(@NonNull Item item, @NonNull View view) {
+        startProgressBar(true);
+        intent.putExtra("toUser", ((LatestMessageAdapter) item).getUser());
+        startActivity(intent);
+      }
+    });
+  }
 
-                        @Override
-                        public void onFailure(Exception e) {
-                            Log.e(TAG, "getUserInfo(key, message).onFailure: ", e);
-                        }
-                    });
-        } else {
-            refreshView();
+  private void setMessageListener() {
+    MessageService.getInstance().setLatestMessageListener(
+        new ResultListener<String, Message>() {
+          @Override
+          public void onSuccess(String key, Message message) {
+            getUserInfo(key, message);
+          }
+
+          @Override
+          public void onChange(String key, Message message) {
+            getUserInfo(key, message);
+          }
+
+          @Override
+          public void onFailure(Exception e) {
+            Log.e(TAG, "setMessageListener().onFailure: ", e);
+          }
         }
-    }
+    );
+  }
 
-    private void refreshView() {
-        mAdapter.clear();
-        for (Map.Entry<String, Message> entry : mMessages.entrySet()) {
-            String key = entry.getKey();
-            Message message = entry.getValue();
-            mAdapter.add(new LatestMessageAdapter(message, mUsers.get(key)));
-        }
-        mRecyclerView.setAdapter(mAdapter);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL);
-        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_off_white,
-                getResources().newTheme()));
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
-        startProgressBar(false);
+  private void getUserInfo(final String key, final Message message) {
+    if (message != null) {
+      String uid;
+      if (message.getFromUid().equals(AuthService.getInstance().getCurrentUid()))
+        uid = message.getToUid();
+      else uid = message.getFromUid();
+      UserService.getInstance().getUser(uid,
+          new ResultListener<String, User>() {
+            @Override
+            public void onSuccess(String k, User user) {
+              mMessages.put(key, message);
+              mUsers.put(key, user);
+              refreshView();
+            }
 
-    }
+            @Override
+            public void onChange(String k, User user) {
+              mUsers.put(key, user);
+              refreshView();
+            }
 
-    private void startProgressBar(boolean shouldStart) {
-        mProgressBar.setVisibility(shouldStart ? View.VISIBLE : View.INVISIBLE);
+            @Override
+            public void onFailure(Exception e) {
+              Log.e(TAG, "getUserInfo(key, message).onFailure: ", e);
+            }
+          });
+    } else {
+      refreshView();
     }
+  }
+
+  private void refreshView() {
+    mAdapter.clear();
+    for (Map.Entry<String, Message> entry : mMessages.entrySet()) {
+      String key = entry.getKey();
+      Message message = entry.getValue();
+      mAdapter.add(new LatestMessageAdapter(message, mUsers.get(key)));
+    }
+    mRecyclerView.setAdapter(mAdapter);
+    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
+        DividerItemDecoration.VERTICAL);
+    dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_off_white,
+        getResources().newTheme()));
+    mRecyclerView.addItemDecoration(dividerItemDecoration);
+    startProgressBar(false);
+
+  }
+
+  private void startProgressBar(boolean shouldStart) {
+    mProgressBar.setVisibility(shouldStart ? View.VISIBLE : View.INVISIBLE);
+  }
 }

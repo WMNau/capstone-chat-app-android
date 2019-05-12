@@ -63,9 +63,9 @@ public class Chat implements Parcelable {
         return text;
     }
 
-//    public Long getTimestamp() {
-//        return timestamp;
-//    }
+    public Long getTimestamp() {
+        return timestamp;
+    }
 
     @Override
     public int describeContents() {

@@ -39,4 +39,13 @@
         app:layout_constraintStart_toEndOf="@+id/latest_message_list_profile_image_view"
         app:layout_constraintTop_toBottomOf="@+id/latest_message_list_full_name_text_view" />
 
+    <TextView
+        android:id="@+id/latest_message_list_date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
