@@ -138,16 +138,12 @@ public class ProfileListActivity extends AppCompatActivity {
                 new ResultListener<String, List<User>>() {
                     @Override
                     public void onSuccess(String key, List<User> users) {
-                        for (User user : users)
-                            if (!user.getUid().equals(mCurrentUser.getUid())) mUsers.add(user);
-                        refreshView();
+                        addUser(users);
                     }
 
                     @Override
                     public void onChange(String key, List<User> users) {
-                        for (User user : users)
-                            if (!user.getUid().equals(mCurrentUser.getUid())) mUsers.add(user);
-                        refreshView();
+                        addUser(users);
                     }
 
                     @Override
@@ -156,6 +152,13 @@ public class ProfileListActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    private void addUser(List<User> users) {
+        mUsers.clear();
+        for (User user : users)
+            if (!user.getUid().equals(mCurrentUser.getUid())) mUsers.add(user);
+        refreshView();
     }
 
     private void refreshView() {
