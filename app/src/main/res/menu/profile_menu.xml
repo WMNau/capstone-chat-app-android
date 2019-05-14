@@ -14,7 +14,7 @@
     <item
         android:id="@+id/menu_profile_private_messages"
         android:icon="@drawable/ic_message"
-        android:title="@string/messages"
+        android:title="@string/private_messages"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_profile_logout"

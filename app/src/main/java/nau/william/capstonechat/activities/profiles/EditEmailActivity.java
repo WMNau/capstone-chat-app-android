@@ -45,6 +45,7 @@ public class EditEmailActivity extends AppCompatActivity {
         mSubmit = findViewById(R.id.edit_email_submit_button);
         mProgressBar = findViewById(R.id.edit_email_progress_bar);
         mOldEmail.setText(mUser.getEmail());
+        mOldEmail.setEnabled(false);
     }
 
     private void setListeners() {
@@ -89,15 +90,15 @@ public class EditEmailActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(mOldEmail.getText()))
             errors.put("oldEmail", "Your old email address" + isRequired);
         if (TextUtils.isEmpty(mNewEmail.getText()))
-            errors.put("newEmail", "A new email address" + isRequired);
+            errors.put("email", "A new email address" + isRequired);
         if (TextUtils.isEmpty(mConfirmEmail.getText()))
             errors.put("confirmEmail", "You must confirm your new email address");
         if (TextUtils.isEmpty(mPassword.getText()))
             errors.put("password", "Password" + isRequired);
-        if (errors.get("newEmail") != null && errors.get("confirmEmail") != null) {
+        if (errors.get("email") != null && errors.get("confirmEmail") != null) {
             if (!mNewEmail.getText().toString().trim().toLowerCase()
                     .equals(mConfirmEmail.getText().toString().trim().toLowerCase()))
-                errors.put("newEmail", "Email addresses do not match.");
+                errors.put("email", "Email addresses do not match.");
         }
         if (errors.size() > 0) {
             result = false;
@@ -108,7 +109,7 @@ public class EditEmailActivity extends AppCompatActivity {
 
     private void setErrors(Map<String, String> errors) {
         mOldEmail.setError(errors.get("oldEmail"));
-        mNewEmail.setError(errors.get("newEmail"));
+        mNewEmail.setError(errors.get("email"));
         mConfirmEmail.setError(errors.get("confirmEmail"));
         mPassword.setError(errors.get("password"));
         startProgressBar(false);

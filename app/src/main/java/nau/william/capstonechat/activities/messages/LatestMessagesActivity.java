@@ -74,7 +74,6 @@ public class LatestMessagesActivity extends AppCompatActivity {
               @Override
               public void onSuccess(String key, User user) {
                 Intent intent = new Intent(mRecyclerView.getContext(), ProfileActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("user", user);
                 startActivity(intent);
               }
@@ -92,11 +91,9 @@ public class LatestMessagesActivity extends AppCompatActivity {
         break;
       case R.id.menu_latest_messages_search_users:
         intent = new Intent(this, ProfileListActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         break;
       case R.id.menu_latest_messages_rooms_list:
         intent = new Intent(this, RoomsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         break;
       case R.id.menu_latest_messages_logout:
         AuthService.getInstance().logout();
