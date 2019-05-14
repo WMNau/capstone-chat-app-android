@@ -30,8 +30,9 @@
     <string name="change_email_address">Edit email</string>
     <string name="change_password">Edit password</string>
     <string name="submit">Submit</string>
-    <string name="old_email_address">Enter your old email address...</string>
+    <string name="old_email_address">Enter your old email address…</string>
     <string name="view_your_profile">View your profile</string>
     <string name="search_users">Search users</string>
     <string name="edit_your_profile">Edit your profile</string>
+    <string name="cancel">Cancel</string>
 </resources>

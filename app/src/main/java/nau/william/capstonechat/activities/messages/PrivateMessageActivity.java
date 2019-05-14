@@ -16,6 +16,7 @@ import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.Item;
 import com.xwray.groupie.OnItemClickListener;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class PrivateMessageActivity extends AppCompatActivity {
   private void setup() {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) actionBar.setTitle(R.string.select_user);
+    mUsers = new HashMap<>();
     mRecyclerView = findViewById(R.id.new_message_recycler_view);
     mProgressBar = findViewById(R.id.new_message_progress_bar);
     mAdapter = new GroupAdapter();
